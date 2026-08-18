@@ -10,6 +10,8 @@ A dependency-free, single-page static portfolio. Open `index.html` through a loc
 - `assets/` - optimized case-study evidence images
 - `downloads/` - public portfolio PDF and resume
 - `AGENTS.md` - factual and visual guardrails for future updates
+- `CHATGPT_REVIEW.md` - upload-ready brief for an independent ChatGPT review
+- `tools/validate-site.ps1` - repeatable local guardrail and asset check
 
 ## Updating files
 
@@ -26,6 +28,12 @@ python -m http.server 8000
 ```
 
 Then open `http://localhost:8000/`. Stop the server with Ctrl+C.
+
+Run the non-browser content and asset checks with:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\validate-site.ps1
+```
 
 ## Publish later with GitHub Pages
 
