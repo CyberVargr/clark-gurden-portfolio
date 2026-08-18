@@ -60,6 +60,34 @@ if ($furnitureMatch.Success) {
 Assert-Check ($html -notmatch '(?i)reviewer guides') 'Reviewer guide remains singular' 'Found prohibited plural “reviewer guides”'
 Assert-Check ($html -match 'Reviewer guide: Predator Atlas 8 only') 'Atlas-only reviewer-guide scope is explicit' 'Atlas-only reviewer-guide scope is missing'
 
+$resumePath = Join-Path $ProjectRoot 'downloads\Clark_Gurden_Resume_2026.docx'
+if (Test-Path -LiteralPath $resumePath) {
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    $resumeArchive = [System.IO.Compression.ZipFile]::OpenRead($resumePath)
+    try {
+        $documentEntry = $resumeArchive.GetEntry('word/document.xml')
+        $reader = [System.IO.StreamReader]::new($documentEntry.Open())
+        try {
+            $resumeXml = $reader.ReadToEnd()
+        }
+        finally {
+            $reader.Dispose()
+        }
+    }
+    finally {
+        $resumeArchive.Dispose()
+    }
+
+    $resumeText = [System.Net.WebUtility]::HtmlDecode(([regex]::Replace($resumeXml, '<[^>]+>', '')))
+    Assert-Check ($resumeText -notmatch '(?i)reviewer guides') 'Resume keeps reviewer guide singular' 'Resume contains prohibited plural “reviewer guides”'
+    Assert-Check ($resumeText -match 'Created product summaries for Predator Atlas 8 and Acer Nitro Blaze Link') 'Resume limits product summaries to Atlas 8 and Blaze Link' 'Resume does not state the approved product-summary scope'
+    Assert-Check ($resumeText -match 'Predator Atlas 8 reviewer guide') 'Resume limits the reviewer guide to Atlas 8' 'Resume does not state the approved reviewer-guide scope'
+    Assert-Check ($resumeText -notmatch 'owning global positioning and go-to-market') 'Resume avoids overly broad sole-ownership language' 'Resume contains overly broad positioning/GTM ownership language'
+}
+else {
+    Assert-Check $false '' 'Downloadable resume is missing'
+}
+
 $thronosLinks = [regex]::Matches($html, 'href="([^"]*thronos[^"]*)"', 'IgnoreCase') |
     ForEach-Object { $_.Groups[1].Value }
 $invalidThronosLinks = @($thronosLinks | Where-Object { $_ -notmatch 'thronos-air' })

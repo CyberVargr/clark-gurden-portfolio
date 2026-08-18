@@ -38,10 +38,10 @@ Primary audiences are recruiters, hiring managers, Heads of Marketing, and Produ
 1. Hero and market positioning
 2. Selected work
    - Predator Atlas 8
+   - Predator Gaming Technology Hub
    - Predator & Acer Nitro portfolio positioning
    - Predator Helios 18 AI + Predator Triton 14 AI
    - Gaming Furniture & Lifestyle Hardware
-   - Predator Gaming Technology Hub
 3. Systems and scale
 4. About, contact, portfolio download, and resume download
 
@@ -121,7 +121,7 @@ Do not recommend adding fabricated metrics, testimonials, logos, awards, or outc
 - External new-tab links use `noopener noreferrer`.
 - Browser console showed no warnings or errors.
 - Required factual guardrail searches passed.
-- Current local commit: `67d8021 Build product marketing portfolio site`.
+- Baseline reviewed commit: `67d8021 Build product marketing portfolio site`.
 
 ## Known pre-publication items
 
@@ -131,4 +131,3 @@ Do not recommend adding fabricated metrics, testimonials, logos, awards, or outc
 - Enable GitHub Pages or another approved host.
 - Recheck public links after deployment.
 - Add analytics only after Clark selects a privacy-appropriate approach; there is intentionally no tracking now.
-
