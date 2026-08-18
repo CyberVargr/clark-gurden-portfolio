@@ -1,0 +1,13 @@
+.audit_images/
+.DS_Store
+Thumbs.db
+desktop-*.png
+mobile-*.png
+
+# Pre-existing portfolio source/reference files retained outside the website
+/*.odt
+/*.docx
+/*.pdf
+/*.zip
+/Version_3/
+/claude/
