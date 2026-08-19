@@ -57,6 +57,29 @@ if ($furnitureMatch.Success) {
     Assert-Check ($furnitureMatch.Value -notmatch 'Blaze Link') 'Blaze Link is outside the furniture case' 'Blaze Link appears inside the furniture case'
 }
 
+Assert-Check ($html -match 'Gaming Portfolio Architecture') 'Gaming Portfolio Architecture section exists' 'Gaming Portfolio Architecture section is missing'
+Assert-Check ($html -match [regex]::Escape('Representative work; contribution varied by launch.')) 'Representative coverage scope is explicit' 'Exact representative coverage scope phrase is missing'
+
+$architectureRows = @(
+    @{ Label = 'Predator Helios'; Model = 'Predator Helios 18 AI' },
+    @{ Label = 'Predator Triton'; Model = 'Predator Triton 14 AI' },
+    @{ Label = 'Neo variants (Helios Neo / Triton Neo)'; Model = 'Assigned Helios Neo / Triton Neo launches' },
+    @{ Label = 'Predator Orion'; Model = 'Assigned Predator Orion launches' },
+    @{ Label = 'Acer Nitro'; Model = 'Acer Nitro 17' },
+    @{ Label = 'Acer Nitro V'; Model = 'Acer Nitro V 15' }
+)
+foreach ($row in $architectureRows) {
+    $rowPresent = $html.Contains($row.Label) -and $html.Contains($row.Model)
+    Assert-Check $rowPresent "Architecture row exists: $($row.Label) / $($row.Model)" "Architecture row is missing: $($row.Label) / $($row.Model)"
+}
+
+Assert-Check ($html -notmatch '(?i)performed well') 'No unsupported “performed well” claim exists' 'Found prohibited “performed well” outcome claim'
+$neoSafetyText = $html.Replace('no single standalone Neo tier is asserted', '')
+$unqualifiedNeoPattern = '(?i)\bNeo\s+(?:(?:is|as)\s+(?:an?\s+)?)?(?:standalone|entry|value|mainstream|mid|premium|upper|performance)?\s*tier\b'
+Assert-Check ($neoSafetyText -notmatch $unqualifiedNeoPattern) 'No unqualified Neo tier is asserted' 'Found prohibited unqualified Neo tier language'
+$orionLadderPattern = '(?is)\bOrion\b.{0,100}\b(?:Neo|X|3000|5000|7000)\b.{0,80}\b(?:tier|ladder)\b|\b(?:Neo|X|3000|5000|7000)\b.{0,80}\bOrion\b.{0,80}\b(?:tier|ladder)\b'
+Assert-Check ($html -notmatch $orionLadderPattern) 'No inferred Orion ladder is published' 'Found prohibited inferred Orion ladder language'
+
 Assert-Check ($html -notmatch '(?i)reviewer guides') 'Reviewer guide remains singular' 'Found prohibited plural “reviewer guides”'
 Assert-Check ($html -match 'Reviewer guide: Predator Atlas 8 only') 'Atlas-only reviewer-guide scope is explicit' 'Atlas-only reviewer-guide scope is missing'
 
@@ -83,6 +106,12 @@ if (Test-Path -LiteralPath $resumePath) {
     Assert-Check ($resumeText -match 'Created product summaries for Predator Atlas 8 and Acer Nitro Blaze Link') 'Resume limits product summaries to Atlas 8 and Blaze Link' 'Resume does not state the approved product-summary scope'
     Assert-Check ($resumeText -match 'Predator Atlas 8 reviewer guide') 'Resume limits the reviewer guide to Atlas 8' 'Resume does not state the approved reviewer-guide scope'
     Assert-Check ($resumeText -notmatch 'owning global positioning and go-to-market') 'Resume avoids overly broad sole-ownership language' 'Resume contains overly broad positioning/GTM ownership language'
+    Assert-Check ($resumeText -match 'Through July 2026') 'Resume states the gaming-PC messaging period' 'Resume is missing the through-July-2026 scope'
+    Assert-Check ($resumeText -match 'assigned hardware releases annually') 'Resume states assigned-launch scope' 'Resume is missing assigned-launch scope'
+    Assert-Check ($resumeText -notmatch '(?i)performed well') 'Resume contains no unsupported “performed well” claim' 'Resume contains prohibited “performed well” outcome language'
+    $resumeNeoSafetyText = $resumeText.Replace('no standalone Neo tier', '')
+    Assert-Check ($resumeNeoSafetyText -notmatch $unqualifiedNeoPattern) 'Resume asserts no unqualified Neo tier' 'Resume contains prohibited unqualified Neo tier language'
+    Assert-Check ($resumeText -notmatch $orionLadderPattern) 'Resume publishes no inferred Orion ladder' 'Resume contains prohibited inferred Orion ladder language'
 }
 else {
     Assert-Check $false '' 'Downloadable resume is missing'

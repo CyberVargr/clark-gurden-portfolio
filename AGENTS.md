@@ -8,7 +8,14 @@
 - Experience covers Predator and Acer Nitro across laptops, desktops, handhelds, monitors, peripherals, audio, connected devices, AI PCs, and gaming furniture.
 - Product summaries were created only for Predator Atlas 8 and Acer Nitro Blaze Link.
 - One reviewer guide was created, for Predator Atlas 8 only. Keep “reviewer guide” singular.
-- For recent laptops/displays, claim global English copymaster plus review/approval of global product-page visual content only where supported. Do not claim product-summary or reviewer-guide ownership.
+- For recent laptops/displays, claim global English copymaster plus messaging review of implemented product-page content only where supported. Do not claim product-summary or reviewer-guide ownership.
+- Gaming-PC messaging-system ownership runs through July 2026 and applies only to assigned launches; contribution varied by launch.
+- Treat Helios Neo and Triton Neo as product-specific extensions of their parent-family positioning. Do not assert a single standalone Neo tier.
+- Do not infer or publish an Orion Neo/X/3000/5000/7000 tier ladder. Orion desktop messaging varied by the approved product proof points for each assigned launch.
+- In this portfolio architecture, name the accessible gaming model Acer Nitro V 15, never Nitro 15.
+- Do not make unsupported outcome, sales, or performance claims, including “performed well.”
+- Keep portfolio coverage representative and category-level. Maintain a separately audited Product Coverage Index before publishing any complete roster.
+- Current live product pages prove product existence and positioning context, not Clark's authorship; authorship claims require separate source support.
 - Predator Gaming Technology was Clark's end-to-end creation: IA, layout/structure, navigation, icon presentation, content hierarchy, copy decisions, and continued module updates. Modules include AeroBlade, Graphene TIM, Predator Vox, Predator MagKey 4.0, and Predator CycloneX 360.
 - Product naming was historical and co-owned with one teammate; never imply sole ownership.
 - Clark wrote consumer-facing copy/messaging for Predator Thronos, Thronos Air, Rift 371, and Predator Gaming Desk. Do not imply ownership of page design, photography, industrial design, or visual art.
