@@ -126,6 +126,13 @@ $images = [regex]::Matches($html, '<img\b[^>]*>', 'IgnoreCase')
 $imagesWithoutAlt = @($images | Where-Object { $_.Value -notmatch '\balt="[^"]+"' })
 Assert-Check ($imagesWithoutAlt.Count -eq 0) 'Every image has non-empty alt text' "$($imagesWithoutAlt.Count) image(s) are missing alt text"
 
+$grapheneImage = '<img class="graphene-module" src="assets/graphene-tim.jpg" alt="Graphene TIM technology module" width="510" height="447" loading="lazy">'
+$grapheneClassCount = [regex]::Matches($html, 'class="graphene-module"', 'IgnoreCase').Count
+$supportingModulesKeepCover = $styles.Contains('.tech-visuals>div img{width:100%;aspect-ratio:1/1.05;object-fit:cover;object-position:top}')
+$grapheneGetsIndividualContain = $styles.Contains('.tech-visuals>div img.graphene-module{object-fit:contain;background:#000}')
+Assert-Check ($html.Contains($grapheneImage) -and $grapheneClassCount -eq 1) 'Graphene TIM keeps its source asset, dimensions, loading, alt text, and unique individual class' 'Graphene TIM evidence markup is missing, altered, or its individual class is not unique'
+Assert-Check ($supportingModulesKeepCover -and $grapheneGetsIndividualContain) 'Only Graphene TIM is contained; the other supporting modules retain editorial cover frames' 'Technology Hub supporting-image crop rules are missing, blanket-altered, or no longer protect Graphene TIM'
+
 $externalTargets = [regex]::Matches($html, '<a\b[^>]*target="_blank"[^>]*>', 'IgnoreCase')
 $unsafeTargets = @($externalTargets | Where-Object { $_.Value -notmatch 'rel="noopener noreferrer"' })
 Assert-Check ($unsafeTargets.Count -eq 0) 'Every new-tab link uses noopener noreferrer' "$($unsafeTargets.Count) new-tab link(s) are missing safe rel attributes"
