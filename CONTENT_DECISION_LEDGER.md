@@ -25,13 +25,22 @@ This ledger records the evidence boundary and publication decisions for Clark Gu
 - Top-level positioning is “Clark Gurden | Senior Product Marketing & Global Brand Strategy,” supported by Gaming Hardware, Portfolio Architecture, and Global GTM & Enablement. The portfolio presents senior judgment across positioning, claims governance, launch systems, technical sales enablement, information architecture, and brand worldbuilding rather than framing Clark primarily as a copywriter.
 - Every human-facing product or model reference uses its complete official public name, including the Predator or Acer Nitro prefix. This applies to the site, accessibility text, link labels, maintenance sources, downloadable portfolio PDF, and résumé; URLs, asset filenames, CSS identifiers, and anchors remain unchanged.
 - Neo variants are treated as product-specific extensions of their parent Predator Helios or Predator Triton family positioning. No standalone Neo tier is asserted.
-- No Orion Neo/X/3000/5000/7000 ladder is inferred or published.
-- The exact Orion and Neo SKU roster remains unresolved pending an audited source record.
+- Predator Orion X is the verified representative Orion launch. It does not establish an Orion Neo/X/3000/5000/7000 tier ladder.
+- Other Orion roster details and the exact Neo SKU roster remain unresolved pending an audited source record.
 - The specific generation represented by Acer Nitro 17 and Acer Nitro V 15 remains unresolved pending an audited source record.
 - “Performed well” and other outcome, sales, or performance claims are excluded pending evidence.
 - Product summaries are limited to Predator Atlas 8 and Acer Nitro Blaze Link.
 - The reviewer guide is limited to Predator Atlas 8.
 - Portfolio coverage remains representative and category-level. Maintain a separate audited Product Coverage Index before publishing a complete roster.
+
+## Predator Orion X evidence decision
+
+- Clark confirmed this exact contribution boundary: “Clark wrote the global English product-page copy and messaging/KSP hierarchy; defined the page structure, content hierarchy, and overall layout direction; and presented Predator Orion X during the 2023 next@acer Global Press Conference. Specialist teams handled final visual production and page implementation.”
+- The official Acer announcement dated April 20, 2023 validates Predator Orion X and its next@acer launch context: https://news.acer.com/acer-unleashes-the-predator-orion-x-desktop-and-curved-monitors-for-gaming-enthusiasts. It does not prove Clark's authorship, industrial-design ownership, event or keynote ownership, outcomes, final visual production, or page implementation.
+- Acer's official 2024 awards page documents Red Dot Product Design, iF Design Award, and Golden Pin Design Award recognition for Predator Orion X: https://www.acer.com/gb-en/awards/2024. Taiwan Excellence independently records Predator Orion X as an award-winning product: https://www.taiwanexcellence.org/en/award/product/1130588.
+- Publish the awards only as product/team recognition, not page-performance proof or Clark's individual awards.
+- Gaming-desktop representative coverage names Predator Orion X. Other Orion roster details remain unresolved and no tier ladder is inferred.
+- The downloadable portfolio PDF and résumé remain accurate at broader Predator Orion family level and are not materially contradictory. They remain unchanged in this website-only evidence-strengthening round.
 
 ## Verified display evidence decision
 
@@ -79,7 +88,7 @@ This ledger records the evidence boundary and publication decisions for Clark Gu
 | Case 02 - Predator Gaming Technology Hub | Keep | Retain the flagship placement and end-to-end information-architecture, navigation, hierarchy, copy, and module-update ownership already supported by the source record. |
 | Case 03 - Predator & Acer Nitro | Update | Keep Acer Nitro Blaze Link evidence and link. Use assigned-launch scope, benefit-led differentiation, and contribution-varied language. Do not describe Acer Nitro as a compromised Predator tier. |
 | Case 04 - Predator Helios 18 AI and Predator Triton 14 AI | Update | Keep both images and links. State global English copymaster, KSP hierarchy, claims/disclaimer language, technical-benefit translation, and messaging review of implemented page content within assigned launches. Do not use review/approval language without formal sign-off proof. |
-| Cases 03/04 - Gaming Portfolio Architecture | Add as associated editorial block | Show the six safe family/product rows and positioning contrast without creating a sixth principal case. Neo and Orion descriptions remain product-specific and non-laddered. |
+| Cases 03/04 - Gaming Portfolio Architecture | Strengthen the existing associated editorial block | Keep the six safe family/product rows and positioning contrast without creating a sixth principal case. Use Predator Orion X as the verified representative Orion launch with the approved contribution, specialist-production boundary, official announcement, and product/team award context. Neo and other Orion descriptions remain product-specific, unresolved where unaudited, and non-laddered. |
 | Display messaging proof | Add as an unnumbered editorial module | Use exactly Predator XB273K 3D and Predator X34 F1, one verified newsroom image each, their family-page links, the official announcement, and the shared user-confirmed role boundary. Keep the module separate from the five principal cases. |
 | Case 05 - Gaming Furniture | Keep | Retain existing copy/messaging ownership and live links. Do not imply page-design, photography, industrial-design, or visual-art ownership. |
 | Brand Worldbuilding & Creative Direction | Expand the unnumbered creative-direction proof | Add compact text-only 2018 Predatorverse and 2019 Summon Your Strength sections with agency/award boundaries; retain exactly Night City Merc and The New Evolution with faithful 1600x900 review derivatives and the approved wallpaper scope. |

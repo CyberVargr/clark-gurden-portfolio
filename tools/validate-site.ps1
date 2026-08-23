@@ -57,6 +57,7 @@ Assert-Check ($html.Contains('<p class="hero-domain"><span>Gaming Hardware</span
 Assert-Check ($html.Contains($expectedHeroIntro)) 'Hero introduction uses the approved senior scope' 'Hero introduction is missing or altered'
 Assert-Check ($html.Contains($expectedWorkSupport)) 'Selected Work support line uses the approved scope' 'Selected Work support line is missing or altered'
 Assert-Check ($html.Contains("<h2>$expectedAboutHeading</h2>") -and $html.Contains($expectedAboutFirst) -and $html.Contains($expectedAboutSecond)) 'About positioning is complete and exact' 'About heading or approved positioning paragraphs are missing or altered'
+Assert-Check ($html.Contains('<link rel="stylesheet" href="styles.css?v=orion-20260824">')) 'Stylesheet uses the approved Orion cache key' 'Stylesheet cache key is missing or altered'
 $max680Count = [regex]::Matches($styles, '@media\s*\(\s*max-width\s*:\s*680px\s*\)', 'IgnoreCase').Count
 $mobileTargetsPresent = $styles.Contains('.wordmark{width:44px;height:44px}') -and
     $styles.Contains('.nav-toggle{display:inline-flex;align-items:center;min-height:44px}') -and
@@ -64,6 +65,8 @@ $mobileTargetsPresent = $styles.Contains('.wordmark{width:44px;height:44px}') -a
     $styles.Contains('.actions .text-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;text-align:center;padding:.6rem}')
 Assert-Check ($max680Count -eq 1) 'Responsive CSS retains one consolidated max-width 680px block' 'Responsive CSS must contain exactly one max-width 680px block'
 Assert-Check $mobileTargetsPresent 'Mobile header, navigation, and action links enforce 44px targets' 'Mobile wordmark, menu, navigation, or action-link target rules are missing or altered'
+$orionLinkTargetsPresent = $styles.Contains('.architecture-row .text-link,.coverage-note .text-link{display:inline-flex;align-items:center;min-height:44px;max-width:100%}')
+Assert-Check $orionLinkTargetsPresent 'Predator Orion matrix and award links enforce 44px targets' 'Predator Orion matrix or award-context link target rules are missing or altered'
 
 $jsonLdMatch = [regex]::Match($html, '(?s)<script type="application/ld\+json">\s*(.*?)\s*</script>', 'IgnoreCase')
 $jsonLdValid = $false
@@ -102,6 +105,7 @@ $canonicalLinkLabels = @(
     'View Live Page: Acer Nitro Blaze Link',
     'View Live Page: Predator Helios 18 AI',
     'View Live Page: Predator Triton 14 AI',
+    'Predator Orion X — official April 2023 announcement',
     'View the Predator XB273K 3D family page',
     'View the Predator X34 F1 family page',
     'View Live Page: Predator Thronos Air',
@@ -387,7 +391,7 @@ $architectureRows = @(
     @{ Label = 'Predator Helios'; Model = 'Predator Helios 18 AI' },
     @{ Label = 'Predator Triton'; Model = 'Predator Triton 14 AI' },
     @{ Label = 'Neo variants (Predator Helios Neo / Predator Triton Neo)'; Model = 'Assigned Predator Helios Neo / Predator Triton Neo launches' },
-    @{ Label = 'Predator Orion'; Model = 'Assigned Predator Orion launches' },
+    @{ Label = 'Predator Orion'; Model = 'Predator Orion X' },
     @{ Label = 'Acer Nitro'; Model = 'Acer Nitro 17' },
     @{ Label = 'Acer Nitro V'; Model = 'Acer Nitro V 15' }
 )
@@ -395,6 +399,21 @@ foreach ($row in $architectureRows) {
     $rowPresent = $html.Contains($row.Label) -and $html.Contains($row.Model)
     Assert-Check $rowPresent "Architecture row exists: $($row.Label) / $($row.Model)" "Architecture row is missing: $($row.Label) / $($row.Model)"
 }
+
+$orionAudience = 'Desktop messaging varied by performance, chassis, cooling, and upgrade story; no fixed ladder is asserted'
+$orionContribution = "Clark wrote the global English product-page copy and messaging/KSP hierarchy; defined the page structure, content hierarchy, and overall layout direction; and presented Predator Orion X during the 2023 next@acer Global Press Conference. Specialist teams handled final visual production and page implementation."
+$orionAnnouncement = 'https://news.acer.com/acer-unleashes-the-predator-orion-x-desktop-and-curved-monitors-for-gaming-enthusiasts'
+$orionAwardContext = "The product received 2024 Red Dot Product Design, iF Design Award, Golden Pin Design Award, and Taiwan Excellence recognition. These are product/team awards, not page-performance proof or Clark's individual awards."
+$orionSourcesPresent = $html.Contains("href=`"$orionAnnouncement`"") -and
+    $html.Contains('href="https://www.acer.com/gb-en/awards/2024"') -and
+    $html.Contains('href="https://www.taiwanexcellence.org/en/award/product/1130588"')
+Assert-Check ($html.Contains($orionAudience)) 'Predator Orion family and audience wording is preserved' 'Predator Orion family or audience wording is missing or altered'
+Assert-Check ($html.Contains($orionContribution)) 'Predator Orion X contribution and specialist-production boundary are exact' 'Predator Orion X contribution or specialist-production boundary is missing or altered'
+Assert-Check ($html.Contains($orionAwardContext)) 'Predator Orion X award context preserves the product/team boundary' 'Predator Orion X award context is missing or implies personal or page-performance proof'
+Assert-Check $orionSourcesPresent 'Predator Orion X uses the approved official announcement and award sources' 'A required Predator Orion X official source is missing or altered'
+Assert-Check ($html.Contains('<strong>Gaming desktops</strong><span>Predator Orion X; Acer Nitro gaming desktops</span>')) 'Gaming-desktop coverage names Predator Orion X' 'Gaming-desktop coverage does not use the verified Predator Orion X representative product'
+$orionUnsupportedPattern = '(?is)Clark.{0,100}\b(?:designed|created)\b.{0,60}\b(?:Predator Orion X|industrial design)\b|Clark.{0,100}\b(?:owned|led)\b.{0,60}\b(?:event|keynote|page implementation|visual production)\b'
+Assert-Check ($html -notmatch $orionUnsupportedPattern) 'Predator Orion X avoids unsupported design, event, keynote, implementation, and award ownership' 'Predator Orion X contains an unsupported design, event, keynote, implementation, or individual-award claim'
 
 Assert-Check ($html -notmatch '(?i)performed well') 'No unsupported “performed well” claim exists' 'Found prohibited “performed well” outcome claim'
 $neoSafetyText = $html.Replace('no single standalone Neo tier is asserted', '')

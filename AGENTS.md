@@ -20,7 +20,7 @@
 - Scale: 20-30 global product launches and 80+ regional technical product sheets annually; EMEA, Pan-America, and APAC scope.
 - Experience covers Predator and Acer Nitro across laptops, desktops, handhelds, monitors, peripherals, audio, connected devices, AI PCs, and gaming furniture.
 - Canonical product naming is a publication requirement. At every product- or model-level reference, use the complete official public name, including the brand prefix where applicable. Apply this to website copy, headings, captions, link labels, alt text, ARIA labels, metadata, structured data, the downloadable portfolio PDF, the résumé, decision ledgers, README guidance, and validator fixtures. Do not shorten a product name after its first mention or to save layout space. Brand-only, category-level, and technology/feature references may remain generic only when they do not identify a specific product or family and the official name does not include the prefix. External URLs, asset filenames, CSS identifiers, and internal anchors do not require renaming. Record any approved exception explicitly in the decision ledger.
-- Canonical examples include Predator Atlas 8, Acer Nitro Blaze Link, Acer Nitro V 15 or Acer Nitro V 16 only when the intended model is separately verified, Predator Helios 18 AI, Predator Triton 14 AI, Predator Helios Neo, Predator Triton Neo, Predator Orion family, Predator XB273K 3D, Predator X34 F1, Predator Thronos, Predator Thronos Air, Predator Rift 371, and Predator Gaming Desk. Do not substitute one SKU for another during a prefix correction.
+- Canonical examples include Predator Atlas 8, Acer Nitro Blaze Link, Acer Nitro V 15 or Acer Nitro V 16 only when the intended model is separately verified, Predator Helios 18 AI, Predator Triton 14 AI, Predator Helios Neo, Predator Triton Neo, Predator Orion X, Predator XB273K 3D, Predator X34 F1, Predator Thronos, Predator Thronos Air, Predator Rift 371, and Predator Gaming Desk. Do not substitute one SKU for another during a prefix correction.
 - Product summaries were created only for Predator Atlas 8 and Acer Nitro Blaze Link.
 - One reviewer guide was created, for Predator Atlas 8 only. Keep “reviewer guide” singular.
 - For recent laptops, claim global English copymaster plus messaging review of implemented product-page content only where supported.
@@ -29,7 +29,10 @@
 - Do not claim photography, final visual-design execution, page production, sole visual approval, outcomes, or product-summary/reviewer-guide ownership for displays. A designer completed final visual design and page implementation; Product Marketing owned the product summaries.
 - Gaming-PC messaging-system ownership runs through July 2026 and applies only to assigned launches; contribution varied by launch.
 - Treat Predator Helios Neo and Predator Triton Neo as product-specific extensions of their parent-family positioning. Do not assert a single standalone Neo tier.
-- Do not infer or publish an Orion Neo/X/3000/5000/7000 tier ladder. Orion desktop messaging varied by the approved product proof points for each assigned launch.
+- Predator Orion X is the verified representative Orion launch, not evidence of an Orion Neo/X/3000/5000/7000 tier ladder. Other Orion roster details remain unresolved; Orion desktop messaging varied by the approved product proof points for each assigned launch.
+- Use this Predator Orion X contribution boundary: “Clark wrote the global English product-page copy and messaging/KSP hierarchy; defined the page structure, content hierarchy, and overall layout direction; and presented Predator Orion X during the 2023 next@acer Global Press Conference. Specialist teams handled final visual production and page implementation.” Do not imply industrial-design ownership, final visual-production or page-implementation ownership, event ownership, keynote ownership, or product outcomes.
+- Predator Orion X received 2024 Red Dot Product Design, iF Design Award, Golden Pin Design Award, and Taiwan Excellence recognition. Describe these only as product/team awards, never page-performance proof or Clark's individual awards.
+- The downloadable PDF and résumé remain accurate at broader Predator Orion family level and are not materially contradictory; do not force this website-only evidence strengthening into those artifacts.
 - In this portfolio architecture, name the accessible gaming model Acer Nitro V 15, never Nitro 15.
 - Do not make unsupported outcome, sales, or performance claims, including “performed well.”
 - Keep portfolio coverage representative and category-level. Maintain a separately audited Product Coverage Index before publishing any complete roster.
@@ -82,6 +85,9 @@
 - Predator XB273K 3D family page: https://www.acer.com/us-en/predator/monitors/xb3-3d
 - Predator X34 F1 family page: https://www.acer.com/us-en/predator/monitors/x34-qd-oled
 - Predator display announcement (May 29, 2026): https://news.acer.com/acers-new-predator-and-nitro-monitors-bring-gaming-experiences-to-life
+- Predator Orion X official announcement (April 20, 2023): https://news.acer.com/acer-unleashes-the-predator-orion-x-desktop-and-curved-monitors-for-gaming-enthusiasts
+- Acer official 2024 awards page: https://www.acer.com/gb-en/awards/2024
+- Predator Orion X Taiwan Excellence record: https://www.taiwanexcellence.org/en/award/product/1130588
 - Predator Gaming Wallpapers: https://www.acer.com/us-en/predator/gaming-wallpaper
 - Night City Merc official image: https://images.acer.com/is/image/acer/2023_Predator_Alternative_Wallpaper_Night%20City%20Merc_2560x1440?$Rectangular-L$=
 - The New Evolution official image: https://images.acer.com/is/image/acer/2023_Predator_Alternative_Wallpaper_The%20New%20Evolution_2560x1440?$Rectangular-L$=
