@@ -57,7 +57,21 @@ Assert-Check ($html.Contains('<p class="hero-domain"><span>Gaming Hardware</span
 Assert-Check ($html.Contains($expectedHeroIntro)) 'Hero introduction uses the approved senior scope' 'Hero introduction is missing or altered'
 Assert-Check ($html.Contains($expectedWorkSupport)) 'Selected Work support line uses the approved scope' 'Selected Work support line is missing or altered'
 Assert-Check ($html.Contains("<h2>$expectedAboutHeading</h2>") -and $html.Contains($expectedAboutFirst) -and $html.Contains($expectedAboutSecond)) 'About positioning is complete and exact' 'About heading or approved positioning paragraphs are missing or altered'
-Assert-Check ($html.Contains('<link rel="stylesheet" href="styles.css?v=orion-20260824">')) 'Stylesheet uses the approved Orion cache key' 'Stylesheet cache key is missing or altered'
+Assert-Check ($html.Contains('<link rel="stylesheet" href="styles.css?v=anchor-20260824">')) 'Stylesheet uses the approved Anchor cache key' 'Stylesheet cache key is missing or altered'
+$furnitureImageRule = [regex]::Match($styles, '\.furniture-gallery\s+img\s*\{(?<declarations>[^}]*)\}', 'IgnoreCase')
+$wallpaperImageRule = [regex]::Match($styles, '\.wallpaper-proof-gallery\s+img\s*\{(?<declarations>[^}]*)\}', 'IgnoreCase')
+$furnitureImageRuleSafe = $furnitureImageRule.Success -and
+    $furnitureImageRule.Groups['declarations'].Value -match 'width\s*:\s*100%' -and
+    $furnitureImageRule.Groups['declarations'].Value -match 'height\s*:\s*auto' -and
+    $furnitureImageRule.Groups['declarations'].Value -match 'object-fit\s*:\s*contain' -and
+    $furnitureImageRule.Groups['declarations'].Value -notmatch 'aspect-ratio\s*:\s*auto'
+$wallpaperImageRuleSafe = $wallpaperImageRule.Success -and
+    $wallpaperImageRule.Groups['declarations'].Value -match 'width\s*:\s*100%' -and
+    $wallpaperImageRule.Groups['declarations'].Value -match 'height\s*:\s*auto' -and
+    $wallpaperImageRule.Groups['declarations'].Value -match 'object-fit\s*:\s*contain' -and
+    $wallpaperImageRule.Groups['declarations'].Value -notmatch 'aspect-ratio\s*:\s*auto'
+Assert-Check $furnitureImageRuleSafe 'Furniture images retain natural sizing without an aspect-ratio override' 'Furniture image sizing rule is missing, altered, or still forces aspect-ratio:auto'
+Assert-Check $wallpaperImageRuleSafe 'Wallpaper images retain natural sizing without an aspect-ratio override' 'Wallpaper image sizing rule is missing, altered, or still forces aspect-ratio:auto'
 $max680Count = [regex]::Matches($styles, '@media\s*\(\s*max-width\s*:\s*680px\s*\)', 'IgnoreCase').Count
 $mobileTargetsPresent = $styles.Contains('.wordmark{width:44px;height:44px}') -and
     $styles.Contains('.nav-toggle{display:inline-flex;align-items:center;min-height:44px}') -and
@@ -147,6 +161,11 @@ $furnitureMatch = [regex]::Match($html, '(?s)<article class="case furniture".*?<
 Assert-Check ($furnitureMatch.Success) 'Furniture case article exists' 'Furniture case article was not found'
 if ($furnitureMatch.Success) {
     Assert-Check ($furnitureMatch.Value -notmatch 'Blaze Link') 'Blaze Link is outside the furniture case' 'Blaze Link appears inside the furniture case'
+    $furnitureImages = [regex]::Matches($furnitureMatch.Value, '<img\b[^>]*>', 'IgnoreCase')
+    $dimensionedFurnitureImages = @($furnitureImages | Where-Object {
+        $_.Value -match '\bwidth="\d+"' -and $_.Value -match '\bheight="\d+"'
+    })
+    Assert-Check ($furnitureImages.Count -eq 3 -and $dimensionedFurnitureImages.Count -eq 3) 'Furniture images preserve explicit width and height attributes' 'Furniture images must remain exactly three images with explicit width and height attributes'
 }
 
 $worldbuildingSectionMatch = [regex]::Match($html, '(?s)<section\b[^>]*id="brand-worldbuilding"[^>]*>.*?</section>', 'IgnoreCase')
