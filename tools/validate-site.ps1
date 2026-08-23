@@ -161,12 +161,20 @@ if ($worldbuildingSectionMatch.Success) {
 
     $worldbuildingUrls = @(
         'https://vanquishmediagroup.com/projects/acer-predator/',
-        'https://shortyawards.com/12th/acer-predator-universe-2',
+        'https://www.behance.net/gallery/83405077/Summon-Your-Strenght-ACER-PREDATOR',
         'https://ifdesign.com/en/winner-ranking/project/predatorverse-2019-summon-your-strength/279455'
     )
-    foreach ($worldbuildingUrl in $worldbuildingUrls) {
-        Assert-Check ($worldbuildingHtml.Contains("href=`"$worldbuildingUrl`"")) "Worldbuilding source link exists: $worldbuildingUrl" "Worldbuilding source link is missing: $worldbuildingUrl"
-    }
+    $worldbuildingSourcesMatch = [regex]::Match($worldbuildingHtml, '(?s)<div class="worldbuilding-sources"[^>]*>(.*?)</div>', 'IgnoreCase')
+    $worldbuildingSourceHtml = if ($worldbuildingSourcesMatch.Success) { $worldbuildingSourcesMatch.Groups[1].Value } else { '' }
+    $worldbuildingSourceAnchors = [regex]::Matches($worldbuildingSourceHtml, '<a\b[^>]*href="([^"]+)"[^>]*>.*?</a>', 'IgnoreCase, Singleline')
+    $worldbuildingSourceHrefs = @($worldbuildingSourceAnchors | ForEach-Object { $_.Groups[1].Value })
+    $worldbuildingSourceOrderExact = $worldbuildingSourceHrefs.Count -eq 3 -and (($worldbuildingSourceHrefs -join "`n") -eq ($worldbuildingUrls -join "`n"))
+    Assert-Check $worldbuildingSourceOrderExact 'Worldbuilding sources are exactly Vanquish, Behance, and iF in chronological order' 'Worldbuilding source links are missing, extra, or out of chronological order'
+    Assert-Check ($worldbuildingSourceHtml.Contains('>Behance 2019 production archive <span aria-hidden="true">↗</span></a>')) 'Behance source uses the approved visible label' 'Behance source label is missing or altered'
+    Assert-Check ($worldbuildingSourceHtml -notmatch [regex]::Escape('https://shortyawards.com/12th/acer-predator-universe-2')) 'Shorty is absent from the public worldbuilding source block' 'Shorty must remain secondary ledger evidence, not a public worldbuilding source'
+    $wallpaperProofIndex = $worldbuildingHtml.IndexOf('<div class="wallpaper-proof-header wallpaper-proof-2023">')
+    $earlyWorldbuildingHtml = if ($wallpaperProofIndex -gt 0) { $worldbuildingHtml.Substring(0, $wallpaperProofIndex) } else { $worldbuildingHtml }
+    Assert-Check ($earlyWorldbuildingHtml -notmatch '(?i)<(?:img|picture|video|iframe|embed|object)\b') '2018 and 2019 worldbuilding proof remains text-only' '2018 or 2019 worldbuilding proof contains prohibited embedded media'
 
     Assert-Check ($worldbuildingHtml.Contains('<h4>Predator Gaming Wallpapers</h4>')) '2023 wallpaper subsection exists' '2023 wallpaper subsection is missing'
     Assert-Check ($worldbuildingHtml.Contains("In 2023, Clark helped launch Predator’s first dedicated gaming-wallpaper destination with internal design, brand, web, and social media teams.")) 'Wallpaper proof lead is exact' 'Wallpaper proof lead is missing or altered'
