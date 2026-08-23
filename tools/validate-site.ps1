@@ -117,7 +117,7 @@ $localReferences = [regex]::Matches($html, '(?:src|href)="((?!https?:|mailto:|#)
     Sort-Object -Unique
 
 foreach ($reference in $localReferences) {
-    $decodedReference = [System.Uri]::UnescapeDataString($reference)
+    $decodedReference = [System.Uri]::UnescapeDataString(($reference -split '[?#]', 2)[0])
     $target = Join-Path $ProjectRoot ($decodedReference -replace '/', [System.IO.Path]::DirectorySeparatorChar)
     Assert-Check (Test-Path -LiteralPath $target) "Local reference exists: $reference" "Missing local reference: $reference"
 }
