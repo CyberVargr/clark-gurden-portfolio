@@ -1,10 +1,14 @@
 [CmdletBinding()]
 param(
-    [string]$ProjectRoot = (Split-Path -Parent $PSScriptRoot)
+    [string]$ProjectRoot = (Split-Path -Parent $PSScriptRoot),
+    [switch]$PublicationReady
 )
 
 $ErrorActionPreference = 'Stop'
 $indexPath = Join-Path $ProjectRoot 'index.html'
+$stylesPath = Join-Path $ProjectRoot 'styles.css'
+$ledgerPath = Join-Path $ProjectRoot 'CONTENT_DECISION_LEDGER.md'
+$chatgptReviewPath = Join-Path $ProjectRoot 'CHATGPT_REVIEW.md'
 $failures = [System.Collections.Generic.List[string]]::new()
 
 if (-not (Test-Path -LiteralPath $indexPath)) {
@@ -12,6 +16,9 @@ if (-not (Test-Path -LiteralPath $indexPath)) {
 }
 
 $html = Get-Content -Raw -LiteralPath $indexPath
+$styles = if (Test-Path -LiteralPath $stylesPath) { Get-Content -Raw -LiteralPath $stylesPath } else { '' }
+$ledger = if (Test-Path -LiteralPath $ledgerPath) { Get-Content -Raw -LiteralPath $ledgerPath } else { '' }
+$chatgptReview = if (Test-Path -LiteralPath $chatgptReviewPath) { Get-Content -Raw -LiteralPath $chatgptReviewPath } else { '' }
 
 function Assert-Check {
     param(
@@ -30,6 +37,78 @@ function Assert-Check {
 }
 
 Write-Host "Clark Gurden portfolio validation`n"
+
+$canonicalPortfolioUrl = 'https://cybervargr.github.io/clark-gurden-portfolio/'
+$expectedTitle = 'Clark Gurden | Senior Product Marketing & Global Brand Strategy'
+$expectedDescription = 'Clark Gurden is a senior product marketing and global brand strategy leader with 10+ years at Acer HQ spanning gaming hardware, portfolio architecture, global GTM, and technical sales enablement.'
+$expectedOgDescription = 'Senior product marketing work across gaming hardware, portfolio architecture, global launch systems, brand worldbuilding, and technical enablement.'
+$expectedHeroIntro = 'I turn complex hardware into clear buyer choices—setting portfolio positioning and message hierarchy, governing technical claims, and building launch and enablement systems across categories, channels, and regions.'
+$expectedWorkSupport = 'Across category entry, portfolio architecture, launch messaging, technical governance, B2B enablement, and brand worldbuilding, each example shows the problem, decision, ownership boundary, and public evidence.'
+$expectedAboutHeading = 'Senior product marketing across gaming, consumer, and commercial hardware.'
+$expectedAboutFirst = 'Clark Gurden spent 10+ years at Acer HQ, from April 2016 to July 2026, shaping global product marketing across Predator, Acer Nitro, AI PCs, and commercial hardware.'
+$expectedAboutSecond = 'His work spans portfolio differentiation, launch messaging systems, information architecture, claims and specification governance, brand worldbuilding, and sales enablement across laptops, desktops, handhelds, monitors, peripherals, audio, connected devices, AI PCs, and gaming furniture.'
+
+Assert-Check ($html.Contains("<title>$expectedTitle</title>") -and $html.Contains("<meta property=`"og:title`" content=`"$expectedTitle`">")) 'Page and Open Graph titles use the approved senior positioning' 'Page or Open Graph title is missing the approved senior positioning'
+Assert-Check ($html.Contains("<meta name=`"description`" content=`"$expectedDescription`">")) 'Meta description uses the approved senior positioning' 'Meta description is missing or altered'
+Assert-Check ($html.Contains("<meta property=`"og:description`" content=`"$expectedOgDescription`">")) 'Open Graph description uses the approved senior positioning' 'Open Graph description is missing or altered'
+Assert-Check ($html -match '<meta property="og:image:alt" content="Predator Atlas 8[^\"]+">') 'Open Graph image has descriptive Predator Atlas 8 alt text' 'Open Graph image alt text is missing or does not describe Predator Atlas 8'
+Assert-Check ($html.Contains('<p class="hero-role">Senior Product Marketing &<br>Global Brand Strategy</p>')) 'Hero role uses the approved senior positioning' 'Hero role is missing or altered'
+Assert-Check ($html.Contains('<p class="hero-domain"><span>Gaming Hardware</span><span>Portfolio Architecture</span><span>Global GTM &amp; Enablement</span></p>')) 'Hero domains use the approved three-part scope' 'Hero domains are missing or altered'
+Assert-Check ($html.Contains($expectedHeroIntro)) 'Hero introduction uses the approved senior scope' 'Hero introduction is missing or altered'
+Assert-Check ($html.Contains($expectedWorkSupport)) 'Selected Work support line uses the approved scope' 'Selected Work support line is missing or altered'
+Assert-Check ($html.Contains("<h2>$expectedAboutHeading</h2>") -and $html.Contains($expectedAboutFirst) -and $html.Contains($expectedAboutSecond)) 'About positioning is complete and exact' 'About heading or approved positioning paragraphs are missing or altered'
+$max680Count = [regex]::Matches($styles, '@media\s*\(\s*max-width\s*:\s*680px\s*\)', 'IgnoreCase').Count
+$mobileTargetsPresent = $styles.Contains('.wordmark{width:44px;height:44px}') -and
+    $styles.Contains('.nav-toggle{display:inline-flex;align-items:center;min-height:44px}') -and
+    $styles.Contains('.site-nav a{display:inline-flex;align-items:center;min-height:44px}') -and
+    $styles.Contains('.actions .text-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;text-align:center;padding:.6rem}')
+Assert-Check ($max680Count -eq 1) 'Responsive CSS retains one consolidated max-width 680px block' 'Responsive CSS must contain exactly one max-width 680px block'
+Assert-Check $mobileTargetsPresent 'Mobile header, navigation, and action links enforce 44px targets' 'Mobile wordmark, menu, navigation, or action-link target rules are missing or altered'
+
+$jsonLdMatch = [regex]::Match($html, '(?s)<script type="application/ld\+json">\s*(.*?)\s*</script>', 'IgnoreCase')
+$jsonLdValid = $false
+if ($jsonLdMatch.Success) {
+    try {
+        $jsonLd = $jsonLdMatch.Groups[1].Value | ConvertFrom-Json
+        $requiredKnowledge = @('Portfolio Architecture', 'Information Architecture', 'Claims Governance')
+        $jsonLdValid = $jsonLd.jobTitle -eq 'Product Marketing & Global Brand Strategy' -and
+            $jsonLd.url -eq $canonicalPortfolioUrl -and
+            @($jsonLd.sameAs).Count -eq 1 -and
+            $jsonLd.sameAs[0] -eq 'https://www.linkedin.com/in/clark-gurden' -and
+            @($requiredKnowledge | Where-Object { $_ -notin @($jsonLd.knowsAbout) }).Count -eq 0
+    }
+    catch {
+        $jsonLdValid = $false
+    }
+}
+Assert-Check $jsonLdValid 'JSON-LD has the canonical URL, approved role, LinkedIn identity, and senior knowledge areas' 'JSON-LD is invalid or missing an approved identity field'
+
+$visibleHtml = [regex]::Replace($html, '(?is)<(?:script|style)\b.*?</(?:script|style)>', ' ')
+$visibleText = [System.Net.WebUtility]::HtmlDecode([regex]::Replace($visibleHtml, '<[^>]+>', ' '))
+$bareCanonicalPattern = '(?i)(?<!Acer )\bNitro Blaze Link\b|\bNitro V laptop line\b|(?<!Predator )\b(?:Helios 18 AI|Triton 14 AI|Helios Neo|Triton Neo|Thronos Air|Rift 371|Gaming Desk)\b'
+Assert-Check ($visibleText -notmatch $bareCanonicalPattern) 'Visible product and model references use complete canonical names' 'Visible copy contains a shortened product or model name'
+$maintenanceCanonicalPattern = '(?i)(?<!Acer )\b(?:Nitro Blaze Link|Nitro 17|Nitro V 15)\b|(?<!Predator )\b(?:Helios 18 AI|Triton 14 AI|Helios Neo|Triton Neo|Thronos Air|Rift 371|Gaming Desk)\b'
+Assert-Check (
+    $ledger.Contains('Acer Nitro 17 and Acer Nitro V 15') -and
+    $chatgptReview.Contains('Predator Thronos, Predator Thronos Air, Predator Rift 371, and Predator Gaming Desk') -and
+    $ledger -notmatch $maintenanceCanonicalPattern -and
+    $chatgptReview -notmatch $maintenanceCanonicalPattern
+) 'Maintenance surfaces use complete canonical product names' 'CONTENT_DECISION_LEDGER.md or CHATGPT_REVIEW.md contains a shortened audited product name'
+$canonicalLinkLabels = @(
+    'View Live Page: Predator Atlas 8',
+    'View Live Page: Predator Gaming Technology Hub',
+    'View Live Page: Acer Nitro Blaze Link',
+    'View Live Page: Predator Helios 18 AI',
+    'View Live Page: Predator Triton 14 AI',
+    'View the Predator XB273K 3D family page',
+    'View the Predator X34 F1 family page',
+    'View Live Page: Predator Thronos Air',
+    'View Live Page: Predator Rift 371',
+    'View Live Page: Predator Gaming Desk'
+)
+foreach ($canonicalLinkLabel in $canonicalLinkLabels) {
+    Assert-Check ($visibleText.Contains($canonicalLinkLabel)) "Canonical link label exists: $canonicalLinkLabel" "Canonical link label is missing: $canonicalLinkLabel"
+}
 
 $localReferences = [regex]::Matches($html, '(?:src|href)="((?!https?:|mailto:|#)[^"]+)"') |
     ForEach-Object { $_.Groups[1].Value } |
@@ -57,13 +136,176 @@ if ($furnitureMatch.Success) {
     Assert-Check ($furnitureMatch.Value -notmatch 'Blaze Link') 'Blaze Link is outside the furniture case' 'Blaze Link appears inside the furniture case'
 }
 
+$worldbuildingSectionMatch = [regex]::Match($html, '(?s)<section\b[^>]*id="brand-worldbuilding"[^>]*>.*?</section>', 'IgnoreCase')
+Assert-Check ($worldbuildingSectionMatch.Success) 'Brand Worldbuilding & Creative Direction module exists' 'Brand Worldbuilding & Creative Direction module is missing'
+if ($worldbuildingSectionMatch.Success) {
+    $worldbuildingHtml = $worldbuildingSectionMatch.Value
+    $wallpaperFigures = [regex]::Matches($worldbuildingHtml, '<figure\b[^>]*>.*?</figure>', 'IgnoreCase, Singleline')
+    $wallpaperImages = [regex]::Matches($worldbuildingHtml, '<img\b[^>]*>', 'IgnoreCase')
+    $wallpaperCaptions = @([regex]::Matches($worldbuildingHtml, '<figcaption>([^<]+)</figcaption>', 'IgnoreCase') | ForEach-Object { $_.Groups[1].Value })
+    $wallpaperScope = "For Night City Merc and The New Evolution, Clark selected the commissioned artists, set the creative vision, and guided each work through briefs, iterative input, and final creative selection. A colleague managed agency and direct-artist coordination; the commissioned artists created the finished artwork. The social media team handled announcement and publication."
+    $wallpaperPageUrl = 'https://www.acer.com/us-en/predator/gaming-wallpaper'
+    $wallpaperImageSources = @($wallpaperImages | ForEach-Object {
+        $sourceMatch = [regex]::Match($_.Value, '\bsrc="([^"]+)"', 'IgnoreCase')
+        if ($sourceMatch.Success) { $sourceMatch.Groups[1].Value }
+    })
+
+    Assert-Check ($worldbuildingHtml -match 'aria-labelledby="brand-worldbuilding-title"' -and $worldbuildingHtml.Contains('<h3 id="brand-worldbuilding-title">Building Predator beyond product specifications.</h3>')) 'Worldbuilding heading and accessible label are complete' 'Worldbuilding heading or accessible label is missing'
+    Assert-Check ($worldbuildingHtml.Contains('Brand worldbuilding &amp; creative direction · 2018–2023')) 'Worldbuilding eyebrow is exact' 'Worldbuilding eyebrow is missing or altered'
+    Assert-Check ($worldbuildingHtml.Contains("Across Predatorverse, Summon Your Strength, and Predator’s gaming-wallpaper program, Clark translated hardware technologies into coherent brand worlds and guided upstream narrative and creative direction before specialist production.")) 'Worldbuilding lead is exact' 'Worldbuilding lead is missing or altered'
+    Assert-Check ($worldbuildingHtml.Contains('<h4>Predatorverse narrative system</h4>')) '2018 Predatorverse subsection exists' '2018 Predatorverse subsection is missing'
+    Assert-Check ($worldbuildingHtml.Contains('Within Acer, Clark originated and wrote the early Predatorverse source narrative: the campaign backstory; product- and character-inspired hero-card content; character and world names; weapons and abilities; and the technology connections that made the system coherent. External writers, artists, and agencies adapted those materials into the final graphic novels, campaign films, and visual assets.')) '2018 Predatorverse role boundary is exact' '2018 Predatorverse role boundary is missing or altered'
+    Assert-Check ($worldbuildingHtml.Contains('Vanquish Media Group produced the documented 2018 public campaign assets.')) '2018 Vanquish production boundary is explicit' '2018 Vanquish production boundary is missing'
+    Assert-Check ($worldbuildingHtml.Contains('<h4>Summon Your Strength</h4>')) '2019 Summon Your Strength subsection exists' '2019 Summon Your Strength subsection is missing'
+    Assert-Check ($worldbuildingHtml.Contains('For the 2019 evolution, Clark originated the tribe-led strategic direction and contributed substantial on-video text and story-continuity language. The finished Acer and We Are Social campaign received an iF Design Award in 2020.')) '2019 role and campaign-award boundary are exact' '2019 role or campaign-award boundary is missing or altered'
+
+    $worldbuildingUrls = @(
+        'https://vanquishmediagroup.com/projects/acer-predator/',
+        'https://shortyawards.com/12th/acer-predator-universe-2',
+        'https://ifdesign.com/en/winner-ranking/project/predatorverse-2019-summon-your-strength/279455'
+    )
+    foreach ($worldbuildingUrl in $worldbuildingUrls) {
+        Assert-Check ($worldbuildingHtml.Contains("href=`"$worldbuildingUrl`"")) "Worldbuilding source link exists: $worldbuildingUrl" "Worldbuilding source link is missing: $worldbuildingUrl"
+    }
+
+    Assert-Check ($worldbuildingHtml.Contains('<h4>Predator Gaming Wallpapers</h4>')) '2023 wallpaper subsection exists' '2023 wallpaper subsection is missing'
+    Assert-Check ($worldbuildingHtml.Contains("In 2023, Clark helped launch Predator’s first dedicated gaming-wallpaper destination with internal design, brand, web, and social media teams.")) 'Wallpaper proof lead is exact' 'Wallpaper proof lead is missing or altered'
+    Assert-Check ($worldbuildingHtml.Contains($wallpaperScope)) 'Wallpaper proof scope is exact' 'Wallpaper proof scope is missing or altered'
+    Assert-Check ($wallpaperFigures.Count -eq 2 -and $wallpaperImages.Count -eq 2) 'Wallpaper proof contains exactly two figures and images' 'Wallpaper proof must contain exactly two figures and two images'
+    Assert-Check ($wallpaperCaptions.Count -eq 2 -and $wallpaperCaptions[0] -eq 'Night City Merc' -and $wallpaperCaptions[1] -eq 'The New Evolution') 'Wallpaper proof captions use the exact two work titles' 'Wallpaper proof captions must be exactly Night City Merc and The New Evolution'
+    Assert-Check ($wallpaperImageSources.Count -eq 2 -and $wallpaperImageSources[0] -eq 'assets/predator-wallpaper-night-city-merc.jpg' -and $wallpaperImageSources[1] -eq 'assets/predator-wallpaper-the-new-evolution.jpg') 'Wallpaper proof uses the exact review-scale assets' 'Wallpaper proof image sources are missing, reordered, or substituted'
+
+    $completeWallpaperImages = @($wallpaperImages | Where-Object {
+        $_.Value -match '\bwidth="1600"' -and
+        $_.Value -match '\bheight="900"' -and
+        $_.Value -match '\bloading="lazy"' -and
+        $_.Value -match '\balt="[^"]+"'
+    })
+    Assert-Check ($completeWallpaperImages.Count -eq 2) 'Wallpaper images preserve dimensions, lazy loading, and descriptive alt text' 'Wallpaper images must use 1600x900 dimensions, lazy loading, and non-empty alt text'
+    Assert-Check ($worldbuildingHtml.Contains("href=`"$wallpaperPageUrl`"") -and $worldbuildingHtml.Contains("View both works on Acer’s official Predator Gaming Wallpapers page")) 'Wallpaper proof uses the exact official page link and CTA' 'Wallpaper proof official page link or CTA is missing or altered'
+
+    $furnitureIndex = $html.IndexOf('id="furniture"')
+    $worldbuildingIndex = $html.IndexOf('id="brand-worldbuilding"')
+    $enablementIndex = $html.IndexOf('id="product-sheet-enablement"')
+    Assert-Check ($furnitureIndex -ge 0 -and $furnitureIndex -lt $worldbuildingIndex -and $worldbuildingIndex -lt $enablementIndex) 'Worldbuilding module sits after Furniture and before Product-Sheet Governance' 'Worldbuilding module is outside the approved case-order position'
+
+    $wallpaperPlaceholderPattern = '(?i)\b(?:tbd|placeholder|coming soon|to be confirmed|pending confirmation|artist name)\b'
+    $worldbuildingForbiddenClaimPattern = '(?is)Clark.{0,100}\b(?:created|designed|illustrated)\b.{0,60}\b(?:art|artwork|wallpaper|character|visual)|Clark.{0,100}\bmanaged\b.{0,60}\b(?:agency|artist)|Clark.{0,100}\b(?:built|designed|coded)\b.{0,60}\b(?:page|site|destination)|Clark.{0,100}\b(?:announced|published|produced)\b|Clark.{0,100}\b(?:handled|owned|led)\b.{0,60}\b(?:announcement|publication|final campaign)|Clark.{0,100}\b(?:authored|wrote)\b.{0,40}\bgraphic novel|Clark.{0,100}\b(?:won|winner|award)\b|\b(?:sole|solely)\b.{0,40}\b(?:owned|ownership|program|campaign)\b|\bShorty\s+(?:win|winner)\b|\b(?:Horizon Zero Dawn|workplace grievance|voice acting|GPC)\b|\bAI\b|\b(?:sales|revenue|audience metrics)\b'
+    Assert-Check ($worldbuildingHtml -notmatch $wallpaperPlaceholderPattern) 'Worldbuilding module contains no placeholder text' 'Worldbuilding module contains placeholder text'
+    Assert-Check ($worldbuildingHtml -notmatch $worldbuildingForbiddenClaimPattern) 'Worldbuilding module contains no forbidden ownership, production, award, or outcome claim' 'Worldbuilding module contains a forbidden ownership, production, authorship, award, outcome, or excluded-context claim'
+}
+
+$systemsSectionMatch = [regex]::Match($html, '(?s)<section\b[^>]*id="systems"[^>]*>.*?</section>', 'IgnoreCase')
+Assert-Check ($systemsSectionMatch.Success) 'Systems & Scale section exists' 'Systems & Scale section is missing'
+if ($systemsSectionMatch.Success) {
+    $systemsHtml = $systemsSectionMatch.Value
+    $launchCommunicationBody = 'Across verified appearances in 2019, 2020, 2021, and 2023, Clark presented Predator product stories at Acer global press and launch events, translating complex gaming hardware into clear, audience-ready messaging.'
+    Assert-Check ($systemsHtml.Contains('Global launch communication') -and $systemsHtml.Contains('<strong>Representing Predator on the Global Stage</strong>')) 'Global launch communication proof is present in Systems & Scale' 'Global launch communication label or heading is missing'
+    Assert-Check ($systemsHtml.Contains($launchCommunicationBody)) 'Global launch communication boundary is exact' 'Global launch communication boundary is missing or altered'
+    Assert-Check ($systemsHtml.Contains('href="https://tw.linkedin.com/in/clark-gurden"') -and $systemsHtml.Contains('href="https://newsbytes.ph/2023/04/22/acer-trains-eyes-on-ai-sustainable-computers-gaming/"')) 'Global launch communication evidence links are exact' 'Global launch communication evidence links are missing or altered'
+    $launchCommunicationMatch = [regex]::Match($systemsHtml, '(?s)<div class="launch-communication">.*?</div>\s*</div>')
+    $launchCommunicationHtml = $launchCommunicationMatch.Value
+    $launchForbiddenPattern = '(?i)\b(?:consecutive|2022|2024|official spokesperson|sole keynote|sole event|equal CEO|audience metrics|voice acting)\b'
+    Assert-Check ($launchCommunicationMatch.Success -and $launchCommunicationHtml -notmatch $launchForbiddenPattern) 'Global launch communication avoids unsupported title, year, ownership, billing, metric, and voice claims' 'Global launch communication contains an unsupported title, year, ownership, billing, metric, or voice claim'
+}
+
 Assert-Check ($html -match 'Gaming Portfolio Architecture') 'Gaming Portfolio Architecture section exists' 'Gaming Portfolio Architecture section is missing'
 Assert-Check ($html -match [regex]::Escape('Representative work; contribution varied by launch.')) 'Representative coverage scope is explicit' 'Exact representative coverage scope phrase is missing'
+
+Assert-Check ($html -match 'id="product-sheet-enablement"') 'Technical Product-Sheet Governance case exists' 'Technical Product-Sheet Governance case is missing'
+Assert-Check ($html -match [regex]::Escape("Representative reconstruction illustrating Clark’s technical product-sheet workflow. Created from public specifications; confidential Acer source material is not reproduced.")) 'Public reconstruction carries the approved confidentiality label' 'The approved reconstruction label is missing or altered'
+
+$enablementStages = @(
+    'Technical &amp; configuration inputs',
+    'Reconciliation &amp; validation',
+    'Structured product sheet',
+    'Tender · partner · regional-sales · web · retail outputs'
+)
+foreach ($stage in $enablementStages) {
+    Assert-Check ($html.Contains($stage)) "Enablement workflow stage exists: $stage" "Enablement workflow stage is missing: $stage"
+}
+
+$specificationFields = @(
+    'Configuration',
+    'Operating system',
+    'Processor and memory',
+    'Security',
+    'Connectivity',
+    'Commercial features',
+    'Reliability',
+    'Compliance',
+    'Regional variation',
+    'Claims and disclaimers'
+)
+foreach ($field in $specificationFields) {
+    Assert-Check ($html -match ('<dt>{0}</dt>' -f [regex]::Escape($field))) "Reconstruction field exists: $field" "Reconstruction field is missing: $field"
+}
+
+$prohibitedB2BClaims = '(?i)enterprise data[- ]center marketing|account-based marketing|pipeline ownership|direct sales ownership|tender pricing|contract negotiation'
+Assert-Check ($html -notmatch $prohibitedB2BClaims) 'No unsupported B2B ownership claim exists' 'Found a prohibited B2B ownership claim'
+
+$laptopCase = [regex]::Match($html, '(?s)<article class="case-card" id="laptops">.*?</article>')
+Assert-Check ($laptopCase.Success) 'Laptop evidence case exists' 'Laptop evidence case is missing'
+if ($laptopCase.Success) {
+    $laptopImages = [regex]::Matches($laptopCase.Value, '<img\b[^>]*src="([^"]+)"', 'IgnoreCase')
+    $laptopSources = @($laptopImages | ForEach-Object { $_.Groups[1].Value })
+    $principalLaptopEvidence = $laptopSources.Count -eq 2 -and
+        $laptopSources -contains 'assets/predator-helios-18-ai.jpg' -and
+        $laptopSources -contains 'assets/predator-triton-14-ai.jpg'
+    Assert-Check $principalLaptopEvidence 'Laptop evidence remains limited to Predator Helios 18 AI and Predator Triton 14 AI' 'Laptop evidence must contain exactly Predator Helios 18 AI and Predator Triton 14 AI'
+}
+
+$displayCards = [regex]::Matches($html, '<article\b[^>]*class="[^"]*display-proof-card[^"]*"[^>]*>', 'IgnoreCase')
+Assert-Check ($displayCards.Count -le 2) 'Display proof uses no more than two products' 'Display proof contains more than two product cards'
+
+if ($PublicationReady) {
+    $displaySectionMatch = [regex]::Match($html, '(?s)<section\b[^>]*id="display-proof"[^>]*>.*?</section>', 'IgnoreCase')
+    $displaySectionPresent = $displaySectionMatch.Success
+    Assert-Check $displaySectionPresent 'Publication gate: verified display proof is a complete section' 'Publication gate: verified display proof section is missing'
+    Assert-Check ($displayCards.Count -eq 2) 'Publication gate: display proof contains exactly two verified products' 'Publication gate: display proof must contain exactly two product cards'
+    Assert-Check ($displayCards.Count -eq 2 -and @($displayCards | Where-Object { $_.Value -match 'data-display-verified="true"' }).Count -eq 2) 'Publication gate: both display products are marked verified' 'Publication gate: every display product must be marked verified'
+
+    if ($displaySectionPresent) {
+        $displayModuleHtml = $displaySectionMatch.Value
+        $scopeSentence = "Across both assigned launches, Clark owned global English product-page writing and KSP/message hierarchy; handled claims, disclaimers, and specification validation; defined page structure and overall layout direction; and co-owned image approval. Product Marketing owned the product summaries, and a designer completed the final visual design and page implementation."
+        $xbUrl = 'https://www.acer.com/us-en/predator/monitors/xb3-3d'
+        $x34Url = 'https://www.acer.com/us-en/predator/monitors/x34-qd-oled'
+        $announcementUrl = 'https://news.acer.com/acers-new-predator-and-nitro-monitors-bring-gaming-experiences-to-life'
+        $immersiveCard = [regex]::Match($displayModuleHtml, '(?s)<article class="display-proof-card" data-display-verified="true" data-display-priority="immersive">.*?</article>', 'IgnoreCase')
+        $competitiveCard = [regex]::Match($displayModuleHtml, '(?s)<article class="display-proof-card" data-display-verified="true" data-display-priority="competitive">.*?</article>', 'IgnoreCase')
+
+        Assert-Check ($displaySectionMatch.Value -match 'aria-labelledby="display-proof-title"' -and $displayModuleHtml.Contains('<h3 id="display-proof-title">Two displays. Two buyer priorities.</h3>')) 'Publication gate: display proof heading and accessible label are complete' 'Publication gate: display proof heading or accessible label is missing'
+        Assert-Check ($displayModuleHtml.Contains('Display messaging proof · Announced May 29, 2026')) 'Publication gate: display announcement date is explicit' 'Publication gate: exact display announcement date is missing'
+        Assert-Check ($immersiveCard.Success -and $competitiveCard.Success) 'Publication gate: immersive and competitive priorities are each represented once' 'Publication gate: exact immersive and competitive card priorities are required'
+        Assert-Check ($immersiveCard.Value.Contains('<h4>Predator XB273K 3D</h4>') -and $competitiveCard.Value.Contains('<h4>Predator X34 F1</h4>')) 'Publication gate: exact canonical display names are present' 'Publication gate: exact canonical display names are missing or mapped to the wrong priority'
+        Assert-Check ($immersiveCard.Value.Contains('src="assets/predator-xb273k-3d.jpg"') -and $competitiveCard.Value.Contains('src="assets/predator-x34-f1.jpg"')) 'Publication gate: exact approved display image sources are used' 'Publication gate: approved display image sources are missing or mapped to the wrong product'
+
+        $displayImages = [regex]::Matches($displayModuleHtml, '<img\b[^>]*>', 'IgnoreCase')
+        $validDisplayImages = @($displayImages | Where-Object {
+            $_.Value -match '\bsrc="[^"]+"' -and
+            $_.Value -match '\balt="[^"]+"' -and
+            $_.Value -match '\bwidth="\d+"' -and
+            $_.Value -match '\bheight="\d+"' -and
+            $_.Value -match '\bloading="lazy"'
+        })
+        Assert-Check ($displayImages.Count -eq 2 -and $validDisplayImages.Count -eq 2) 'Publication gate: both display products have complete lazy-loaded evidence images' 'Publication gate: display proof must contain exactly two images with source, alt text, dimensions, and lazy loading'
+        Assert-Check ($displayModuleHtml.Contains("href=`"$xbUrl`"") -and $displayModuleHtml.Contains("href=`"$x34Url`"") -and ([regex]::Matches($displayModuleHtml, '(?i)family page').Count -eq 2)) 'Publication gate: both official family-page links are exact and clearly labeled' 'Publication gate: exact official family-page links or labels are missing'
+        Assert-Check ($displayModuleHtml.Contains("href=`"$announcementUrl`"")) 'Publication gate: official display announcement link is exact' 'Publication gate: official display announcement link is missing'
+        Assert-Check ($displayModuleHtml.Contains($scopeSentence)) 'Publication gate: exact shared display scope is present' 'Publication gate: exact shared display scope sentence is missing or altered'
+
+        $placeholderPattern = '(?i)\b(?:tbd|placeholder|coming soon|to be confirmed|pending confirmation|model name)\b'
+        $unsupportedDisplayOwnershipPattern = '(?is)Clark.{0,120}\b(?:owned|created|led|completed|executed|produced)\b.{0,80}\b(?:product summar(?:y|ies)|reviewer guide|photograph(?:y|ic)?|final visual design|page (?:production|implementation))\b|\bsole (?:visual|image) approval\b'
+        Assert-Check ($displayModuleHtml -notmatch $placeholderPattern) 'Publication gate: display proof contains no placeholder or speculative text' 'Publication gate: display proof contains placeholder or speculative text'
+        Assert-Check ($displayModuleHtml -notmatch $unsupportedDisplayOwnershipPattern) 'Publication gate: display proof contains no unsupported ownership phrase' 'Publication gate: display proof contains unsupported photography, design, production, summary, guide, or sole-approval ownership'
+    }
+
+    Assert-Check ($html -notmatch [regex]::Escape('Global English copymaster plus review and approval of global product-page visual content where supported.')) 'Publication gate: obsolete generic display boundary is absent' 'Publication gate: obsolete generic display boundary remains'
+}
 
 $architectureRows = @(
     @{ Label = 'Predator Helios'; Model = 'Predator Helios 18 AI' },
     @{ Label = 'Predator Triton'; Model = 'Predator Triton 14 AI' },
-    @{ Label = 'Neo variants (Helios Neo / Triton Neo)'; Model = 'Assigned Helios Neo / Triton Neo launches' },
+    @{ Label = 'Neo variants (Predator Helios Neo / Predator Triton Neo)'; Model = 'Assigned Predator Helios Neo / Predator Triton Neo launches' },
     @{ Label = 'Predator Orion'; Model = 'Assigned Predator Orion launches' },
     @{ Label = 'Acer Nitro'; Model = 'Acer Nitro 17' },
     @{ Label = 'Acer Nitro V'; Model = 'Acer Nitro V 15' }

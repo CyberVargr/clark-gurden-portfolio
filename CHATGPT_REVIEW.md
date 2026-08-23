@@ -53,7 +53,7 @@ Primary audiences are recruiters, hiring managers, Heads of Marketing, and Produ
 - Recent laptop/display work may claim a global English copymaster plus review/approval of global product-page visual content only where supported.
 - Predator Gaming Technology was Clark's end-to-end creation: information architecture, layout/structure, navigation, icon presentation, content hierarchy, copy decisions, and continued module updates.
 - Product naming was historical and co-owned with one teammate; never imply sole ownership.
-- Clark wrote consumer-facing messaging for Predator Thronos, Thronos Air, Rift 371, and Predator Gaming Desk. Do not imply ownership of visual design, product photography, industrial design, or art direction.
+- Clark wrote consumer-facing messaging for Predator Thronos, Predator Thronos Air, Predator Rift 371, and Predator Gaming Desk. Do not imply ownership of visual design, product photography, industrial design, or art direction.
 - Acer Nitro Blaze Link must not appear inside the furniture case.
 - The historical original Thronos must not receive a dead live-page link.
 - Do not invent performance metrics, business results, tools, responsibilities, or ownership.
