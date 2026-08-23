@@ -63,6 +63,8 @@ This ledger records the evidence boundary and publication decisions for Clark Gu
 
 - Systems & Scale includes one compact speaking proof: “Across verified appearances in 2019, 2020, 2021, and 2023, Clark presented Predator product stories at Acer global press and launch events, translating complex gaming hardware into clear, audience-ready messaging.”
 - The public 2019-2021 event entries link is https://tw.linkedin.com/in/clark-gurden. LinkedIn was not machine-readable in this review; the entries and years remain user-confirmed evidence.
+- The Tech-Critter article dated June 24, 2020 independently confirms the Predator Shot announcement at the next@acer Global Press Conference and that presenters discussed it: https://www.tech-critter.com/acer-energy-drink-predator-shot/. It does not identify Clark or Jason Chen. Clark personally confirms the supplied screenshot shows him at left and Acer CEO Jason Chen at right. The image remains private and unpublished pending copyright and provenance clearance.
+- Decision: publish the Tech-Critter URL as link-only event-context evidence. Do not infer product ownership, launch or event ownership, equal CEO billing, official-spokesperson status, keynote or script ownership, results, or image-reuse rights. Do not publish the screenshot, its filename, or its path. The PDF and résumé remain unchanged because the underlying 2020 speaking claim already exists.
 - Independent 2023 coverage names Clark in the event's Predator gaming presentation: https://newsbytes.ph/2023/04/22/acer-trains-eyes-on-ai-sustainable-computers-gaming/.
 - Do not imply consecutive-year appearances, 2022 or 2024 participation, an official spokesperson title, sole keynote/event ownership, equal CEO billing, audience metrics, or voice acting.
 

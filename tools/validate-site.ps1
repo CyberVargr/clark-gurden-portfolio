@@ -210,10 +210,25 @@ if ($systemsSectionMatch.Success) {
     $launchCommunicationBody = 'Across verified appearances in 2019, 2020, 2021, and 2023, Clark presented Predator product stories at Acer global press and launch events, translating complex gaming hardware into clear, audience-ready messaging.'
     Assert-Check ($systemsHtml.Contains('Global launch communication') -and $systemsHtml.Contains('<strong>Representing Predator on the Global Stage</strong>')) 'Global launch communication proof is present in Systems & Scale' 'Global launch communication label or heading is missing'
     Assert-Check ($systemsHtml.Contains($launchCommunicationBody)) 'Global launch communication boundary is exact' 'Global launch communication boundary is missing or altered'
-    Assert-Check ($systemsHtml.Contains('href="https://tw.linkedin.com/in/clark-gurden"') -and $systemsHtml.Contains('href="https://newsbytes.ph/2023/04/22/acer-trains-eyes-on-ai-sustainable-computers-gaming/"')) 'Global launch communication evidence links are exact' 'Global launch communication evidence links are missing or altered'
     $launchCommunicationMatch = [regex]::Match($systemsHtml, '(?s)<div class="launch-communication">.*?</div>\s*</div>')
     $launchCommunicationHtml = $launchCommunicationMatch.Value
-    $launchForbiddenPattern = '(?i)\b(?:consecutive|2022|2024|official spokesperson|sole keynote|sole event|equal CEO|audience metrics|voice acting)\b'
+    $launchLinksMatch = [regex]::Match($launchCommunicationHtml, '(?s)<div class="launch-communication-links">(.*?)</div>', 'IgnoreCase')
+    $launchLinksHtml = if ($launchLinksMatch.Success) { $launchLinksMatch.Groups[1].Value } else { '' }
+    $launchAnchors = [regex]::Matches($launchLinksHtml, '<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', 'IgnoreCase, Singleline')
+    $launchHrefs = @($launchAnchors | ForEach-Object { $_.Groups[1].Value })
+    $expectedLaunchHrefs = @(
+        'https://tw.linkedin.com/in/clark-gurden',
+        'https://www.tech-critter.com/acer-energy-drink-predator-shot/',
+        'https://newsbytes.ph/2023/04/22/acer-trains-eyes-on-ai-sustainable-computers-gaming/'
+    )
+    $launchLinkOrderExact = $launchHrefs.Count -eq 3 -and (($launchHrefs -join "`n") -eq ($expectedLaunchHrefs -join "`n"))
+    Assert-Check $launchLinkOrderExact 'Global launch evidence is exactly LinkedIn, Tech-Critter, and Newsbytes in order' 'Global launch evidence links are missing, extra, or out of order'
+    Assert-Check ($launchLinksHtml.Contains('>Independent 2020 Predator Shot event coverage <span aria-hidden="true">↗</span></a>')) 'Tech-Critter link uses the approved visible label' 'Tech-Critter link label is missing or altered'
+    Assert-Check (@($launchAnchors | Where-Object { $_.Value -notmatch 'rel="noopener noreferrer"' }).Count -eq 0) 'All global launch evidence links use noopener noreferrer' 'A global launch evidence link is missing noopener noreferrer'
+    Assert-Check ($launchCommunicationHtml -notmatch '(?i)<(?:img|figure|picture|video|iframe|embed|object)\b') 'Global launch communication remains link-only' 'Global launch communication contains prohibited media'
+    $privateScreenshotPattern = '(?i)\bscreenshot\b|\.codex[\\/]|OneDrive[\\/](?:Pictures|Documents)|[A-Za-z]:\\Users\\'
+    Assert-Check ($launchCommunicationHtml -notmatch $privateScreenshotPattern) 'Private screenshot filename and path are absent from public launch proof' 'Public launch proof exposes a private screenshot reference or local path'
+    $launchForbiddenPattern = '(?i)\b(?:consecutive|2022|2024|official spokesperson|sole keynote|sole event|equal CEO|audience metrics|voice acting)\b|\b(?:launched|created|owned)\s+(?:the\s+)?Predator Shot\b|\bco[- ]?(?:hosted|keynoted)\b|\b(?:equal|shared)\s+(?:CEO\s+)?billing\b|\bkeynote\s+ownership\b|\bscript\s+ownership\b'
     Assert-Check ($launchCommunicationMatch.Success -and $launchCommunicationHtml -notmatch $launchForbiddenPattern) 'Global launch communication avoids unsupported title, year, ownership, billing, metric, and voice claims' 'Global launch communication contains an unsupported title, year, ownership, billing, metric, or voice claim'
 }
 

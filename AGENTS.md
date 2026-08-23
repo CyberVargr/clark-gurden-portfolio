@@ -53,6 +53,8 @@
 - Do not claim Clark created, designed, or illustrated the wallpaper artwork; managed the agency or artists; built, designed, or coded the wallpaper page; solely owned the program; handled social announcement or publication; or produced outcomes. Do not name the artists or publish social-media evidence screenshots.
 - Use only the two 1600x900 review-scale JPEG derivatives in `assets/`. Keep the supplied full-resolution originals read-only and outside the repository.
 - Systems & Scale includes one compact speaking proof with this exact boundary: “Across verified appearances in 2019, 2020, 2021, and 2023, Clark presented Predator product stories at Acer global press and launch events, translating complex gaming hardware into clear, audience-ready messaging.”
+- The Tech-Critter article dated June 24, 2020 independently confirms the Predator Shot announcement at the next@acer Global Press Conference and that presenters discussed it, but it does not identify Clark or Jason Chen. Clark personally confirms the supplied screenshot shows him at left and Acer CEO Jason Chen at right. Keep the image private and unpublished pending copyright and provenance clearance.
+- Treat Tech-Critter as event-context evidence only. Do not infer product ownership, launch or event ownership, equal CEO billing, official-spokesperson status, keynote or script ownership, results, or image-reuse rights. Do not publish, copy, or reference the private screenshot path or filename.
 - Do not imply consecutive-year appearances, 2022 or 2024 participation, an official spokesperson title, sole keynote/event ownership, equal CEO billing, audience metrics, or voice acting.
 - Original Thronos may be mentioned historically but must not link to a dead page.
 - Keep Acer Nitro Blaze Link out of the furniture case.
@@ -86,6 +88,7 @@
 - Summon Your Strength iF entry: https://ifdesign.com/en/winner-ranking/project/predatorverse-2019-summon-your-strength/279455
 - Secondary internal corroboration only — Predatorverse Shorty campaign entry: https://shortyawards.com/12th/acer-predator-universe-2
 - Public 2019-2021 event entries: https://tw.linkedin.com/in/clark-gurden
+- Independent 2020 Predator Shot event coverage: https://www.tech-critter.com/acer-energy-drink-predator-shot/
 - Independent 2023 event coverage: https://newsbytes.ph/2023/04/22/acer-trains-eyes-on-ai-sustainable-computers-gaming/
 - Predator Thronos Air: https://www.acer.com/ph-en/predator/chairs/thronos/thronos-air
 - Predator Rift 371: https://www.acer.com/us-en/predator/chairs/gaming-chair/rift-371
