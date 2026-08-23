@@ -87,6 +87,8 @@ $visibleHtml = [regex]::Replace($html, '(?is)<(?:script|style)\b.*?</(?:script|s
 $visibleText = [System.Net.WebUtility]::HtmlDecode([regex]::Replace($visibleHtml, '<[^>]+>', ' '))
 $bareCanonicalPattern = '(?i)(?<!Acer )\bNitro Blaze Link\b|\bNitro V laptop line\b|(?<!Predator )\b(?:Helios 18 AI|Triton 14 AI|Helios Neo|Triton Neo|Thronos Air|Rift 371|Gaming Desk)\b'
 Assert-Check ($visibleText -notmatch $bareCanonicalPattern) 'Visible product and model references use complete canonical names' 'Visible copy contains a shortened product or model name'
+$bareAcerNitroBrandPattern = '(?i)(?<!Acer )\bNitro\b'
+Assert-Check ($visibleText -notmatch $bareAcerNitroBrandPattern) 'Visible brand references use Acer Nitro in full' 'Visible copy contains a bare Nitro brand reference'
 $maintenanceCanonicalPattern = '(?i)(?<!Acer )\b(?:Nitro Blaze Link|Nitro 17|Nitro V 15)\b|(?<!Predator )\b(?:Helios 18 AI|Triton 14 AI|Helios Neo|Triton Neo|Thronos Air|Rift 371|Gaming Desk)\b'
 Assert-Check (
     $ledger.Contains('Acer Nitro 17 and Acer Nitro V 15') -and
@@ -157,7 +159,7 @@ if ($worldbuildingSectionMatch.Success) {
     Assert-Check ($worldbuildingHtml.Contains('Within Acer, Clark originated and wrote the early Predatorverse source narrative: the campaign backstory; product- and character-inspired hero-card content; character and world names; weapons and abilities; and the technology connections that made the system coherent. External writers, artists, and agencies adapted those materials into the final graphic novels, campaign films, and visual assets.')) '2018 Predatorverse role boundary is exact' '2018 Predatorverse role boundary is missing or altered'
     Assert-Check ($worldbuildingHtml.Contains('Vanquish Media Group produced the documented 2018 public campaign assets.')) '2018 Vanquish production boundary is explicit' '2018 Vanquish production boundary is missing'
     Assert-Check ($worldbuildingHtml.Contains('<h4>Summon Your Strength</h4>')) '2019 Summon Your Strength subsection exists' '2019 Summon Your Strength subsection is missing'
-    Assert-Check ($worldbuildingHtml.Contains('For the 2019 evolution, Clark originated the tribe-led strategic direction and contributed substantial on-video text and story-continuity language. The finished Acer and We Are Social campaign received an iF Design Award in 2020.')) '2019 role and campaign-award boundary are exact' '2019 role or campaign-award boundary is missing or altered'
+    Assert-Check ($worldbuildingHtml.Contains('For the 2019 evolution, Clark originated the tribe-led strategic direction and contributed substantial on-video text and story-continuity language. The finished Acer and We Are Social campaign received an iF DESIGN AWARD in 2020.')) '2019 role and campaign-award boundary are exact' '2019 role or campaign-award boundary is missing or altered'
 
     $worldbuildingUrls = @(
         'https://vanquishmediagroup.com/projects/acer-predator/',
@@ -171,6 +173,7 @@ if ($worldbuildingSectionMatch.Success) {
     $worldbuildingSourceOrderExact = $worldbuildingSourceHrefs.Count -eq 3 -and (($worldbuildingSourceHrefs -join "`n") -eq ($worldbuildingUrls -join "`n"))
     Assert-Check $worldbuildingSourceOrderExact 'Worldbuilding sources are exactly Vanquish, Behance, and iF in chronological order' 'Worldbuilding source links are missing, extra, or out of chronological order'
     Assert-Check ($worldbuildingSourceHtml.Contains('>Behance 2019 production archive <span aria-hidden="true">↗</span></a>')) 'Behance source uses the approved visible label' 'Behance source label is missing or altered'
+    Assert-Check ($worldbuildingSourceHtml.Contains('>iF DESIGN AWARD 2020 entry <span aria-hidden="true">↗</span></a>')) 'iF source uses the canonical visible label' 'iF source label is missing or noncanonical'
     Assert-Check ($worldbuildingSourceHtml -notmatch [regex]::Escape('https://shortyawards.com/12th/acer-predator-universe-2')) 'Shorty is absent from the public worldbuilding source block' 'Shorty must remain secondary ledger evidence, not a public worldbuilding source'
     $wallpaperProofIndex = $worldbuildingHtml.IndexOf('<div class="wallpaper-proof-header wallpaper-proof-2023">')
     $earlyWorldbuildingHtml = if ($wallpaperProofIndex -gt 0) { $worldbuildingHtml.Substring(0, $wallpaperProofIndex) } else { $worldbuildingHtml }
@@ -237,6 +240,54 @@ Assert-Check ($html -match [regex]::Escape('Representative work; contribution va
 
 Assert-Check ($html -match 'id="product-sheet-enablement"') 'Technical Product-Sheet Governance case exists' 'Technical Product-Sheet Governance case is missing'
 Assert-Check ($html -match [regex]::Escape("Representative reconstruction illustrating Clark’s technical product-sheet workflow. Created from public specifications; confidential Acer source material is not reproduced.")) 'Public reconstruction carries the approved confidentiality label' 'The approved reconstruction label is missing or altered'
+
+$enablementSectionMatch = [regex]::Match($html, '(?s)<article\b[^>]*id="product-sheet-enablement"[^>]*>.*?</article>', 'IgnoreCase')
+Assert-Check ($enablementSectionMatch.Success) 'Technical Product-Sheet Governance section is structurally complete' 'Technical Product-Sheet Governance section could not be parsed'
+if ($enablementSectionMatch.Success) {
+    $enablementHtml = $enablementSectionMatch.Value
+    $officialProductUrl = 'https://www.acer.com/us-en/desktops-and-all-in-ones/veriton-all-in-ones/veriton-vero-6000-all-in-one'
+    $officialSpecificationUrl = 'https://news.acer.com/acer-introduces-the-veriton-ra100-ai-mini-workstation-a-windows-11-copilot-pc-powered-by-amd-ryzen-ai-max-395-processors-for-advanced-ai-performance'
+    $requiredPartnerRows = @(
+        'Acer Veriton Vero 6000 All-in-One example',
+        'VVZ6734G / VVZ6734GT business all-in-one; options vary by model and region.',
+        'Up to Intel<sup>®</sup> Core<sup>™</sup> Ultra 9 processor 285; up to 64 GB dual-channel DDR5 memory.',
+        'Intel vPro<sup>®</sup> platform, TPM 2.0, and Kensington Security Slot<sup>™</sup> support.',
+        'Wi-Fi<sup>®</sup> 7, Bluetooth<sup>®</sup> 5.4 wireless technology, RJ-45, USB Type-C<sup>®</sup>, USB Type-A, HDMI, and DisplayPort<sup>™</sup>.',
+        'Integrated 5 MP + IR webcam, adjustable display options, and VESA<sup>®</sup> mount support.',
+        'Meets MIL-STD 810H standards.',
+        "Acer’s January 2026 announcement lists EPEAT<sup>®</sup> Gold registration, TCO Certified, and ENERGY STAR<sup>®</sup> 9.0 certification; exact model-and-market eligibility requires registry validation."
+    )
+    foreach ($requiredPartnerRow in $requiredPartnerRows) {
+        Assert-Check ($enablementHtml.Contains($requiredPartnerRow)) "Partner-governed reconstruction text exists: $requiredPartnerRow" "Partner-governed reconstruction text is missing or altered: $requiredPartnerRow"
+    }
+    $officialProductAnchor = "href=`"$officialProductUrl`" target=`"_blank`" rel=`"noopener noreferrer`""
+    $officialSpecificationAnchor = "href=`"$officialSpecificationUrl`" target=`"_blank`" rel=`"noopener noreferrer`""
+    Assert-Check ($enablementHtml.Contains($officialProductAnchor) -and $enablementHtml.Contains($officialSpecificationAnchor)) 'Both official Acer reconstruction sources are linked with safe external-link attributes' 'An official Acer reconstruction link, target, or rel attribute is missing'
+
+    $requiredAttributions = @(
+        'Intel, Intel Core, and Intel vPro are trademarks of Intel Corporation or its subsidiaries.',
+        'Kensington Security Slot<sup>™</sup> is a trademark of ACCO Brands.',
+        'The Bluetooth<sup>®</sup> word mark is a registered trademark owned by Bluetooth SIG, Inc.',
+        'Wi-Fi<sup>®</sup> is a registered trademark of Wi-Fi Alliance.',
+        'USB Type-C<sup>®</sup> is a registered trademark of USB Implementers Forum.',
+        'VESA<sup>®</sup> is a registered trademark and DisplayPort<sup>™</sup> is a trademark of VESA.',
+        'EPEAT<sup>®</sup> is a registered trademark of Global Electronics Council.',
+        'ENERGY STAR<sup>®</sup> is a registered trademark of the U.S. Environmental Protection Agency.',
+        'LinkedIn<sup>®</sup> is a registered trademark of LinkedIn Corporation and its affiliates.'
+    )
+    foreach ($requiredAttribution in $requiredAttributions) {
+        Assert-Check ($enablementHtml.Contains($requiredAttribution)) "Partner attribution exists: $requiredAttribution" "Partner attribution is missing: $requiredAttribution"
+    }
+
+    $obsoletePartnerTerms = '(?i)\bIntel Core Ultra 9;|\bIntel vPro,|\bBluetooth 5\.4\b|\bRJ45\b|\bUSB-C\b|\bUSB-A\b|\bTCO,\b|\bENERGY STAR 9\.0 certifications\b|\bMIL-STD 810H testing\b'
+    Assert-Check ($enablementHtml -notmatch $obsoletePartnerTerms) 'Obsolete partner naming is absent from the reconstruction' 'The reconstruction contains obsolete or noncanonical partner naming'
+}
+
+$footerNonAffiliation = 'Independent portfolio; not affiliated with or endorsed by Acer or any referenced company, platform, standards body, or certification program. All trademarks, service marks, certification marks, and trade names are the property of their respective owners.'
+Assert-Check ($html.Contains($footerNonAffiliation)) 'Footer carries the approved trademark and non-affiliation notice' 'Footer trademark or non-affiliation notice is missing or altered'
+
+$linkedInServiceAnchors = [regex]::Matches($html, 'href="https://www\.linkedin\.com/in/clark-gurden"[^>]*>LinkedIn<sup>®</sup>', 'IgnoreCase')
+Assert-Check ($linkedInServiceAnchors.Count -eq 2) 'Both visible LinkedIn service links use the owner-preferred first-use mark' 'A visible LinkedIn service link is missing its owner-preferred mark'
 
 $enablementStages = @(
     'Technical &amp; configuration inputs',
