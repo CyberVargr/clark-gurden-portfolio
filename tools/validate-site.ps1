@@ -47,6 +47,7 @@ $expectedWorkSupport = 'Across category entry, portfolio architecture, launch me
 $expectedAboutHeading = 'Senior product marketing across gaming, consumer, and commercial hardware.'
 $expectedAboutFirst = 'Clark Gurden spent 10+ years at Acer HQ, from April 2016 to July 2026, shaping global product marketing across Predator, Acer Nitro, AI PCs, and commercial hardware.'
 $expectedAboutSecond = 'His work spans portfolio differentiation, launch messaging systems, information architecture, claims and specification governance, brand worldbuilding, and sales enablement across laptops, desktops, handhelds, monitors, peripherals, audio, connected devices, AI PCs, and gaming furniture.'
+$expectedAboutRegional = 'Based in Taipei, Taiwan. Native English. Experienced in global product-marketing execution across EMEA, Pan America (North and Latin America), and Pan Asia Pacific.'
 
 Assert-Check ($html.Contains("<title>$expectedTitle</title>") -and $html.Contains("<meta property=`"og:title`" content=`"$expectedTitle`">")) 'Page and Open Graph titles use the approved senior positioning' 'Page or Open Graph title is missing the approved senior positioning'
 Assert-Check ($html.Contains("<meta name=`"description`" content=`"$expectedDescription`">")) 'Meta description uses the approved senior positioning' 'Meta description is missing or altered'
@@ -56,7 +57,14 @@ Assert-Check ($html.Contains('<p class="hero-role">Senior Product Marketing &<br
 Assert-Check ($html.Contains('<p class="hero-domain"><span>Gaming Hardware</span><span>Portfolio Architecture</span><span>Global GTM &amp; Enablement</span></p>')) 'Hero domains use the approved three-part scope' 'Hero domains are missing or altered'
 Assert-Check ($html.Contains($expectedHeroIntro)) 'Hero introduction uses the approved senior scope' 'Hero introduction is missing or altered'
 Assert-Check ($html.Contains($expectedWorkSupport)) 'Selected Work support line uses the approved scope' 'Selected Work support line is missing or altered'
-Assert-Check ($html.Contains("<h2>$expectedAboutHeading</h2>") -and $html.Contains($expectedAboutFirst) -and $html.Contains($expectedAboutSecond)) 'About positioning is complete and exact' 'About heading or approved positioning paragraphs are missing or altered'
+Assert-Check ($html.Contains("<h2>$expectedAboutHeading</h2>") -and $html.Contains($expectedAboutFirst) -and $html.Contains($expectedAboutSecond) -and $html.Contains($expectedAboutRegional)) 'About positioning is complete and exact' 'About heading or approved positioning paragraphs are missing or altered'
+Assert-Check ($html.Contains('<div><strong>3 Acer regions</strong><span>EMEA · Pan America · Pan Asia Pacific</span></div>')) 'Hero proof uses Acer official regional terminology' 'Hero proof does not use the approved three-region terminology'
+$obsoleteRegionalPattern = '(?i)\bPan-America\b|\bAPAC\b|\bPAP\b'
+Assert-Check ($html -notmatch $obsoleteRegionalPattern) 'Public regional terminology is canonical' 'Obsolete Pan-America, APAC, or PAP terminology remains in public copy'
+$regionalLedgerBoundary = $ledger.Contains("Acer's official public operating-region names are EMEA, Pan America, and Pan Asia Pacific.") -and
+    $ledger.Contains('Pan America as covering North and Latin America') -and
+    $ledger.Contains('does not claim regional organization ownership, distributor or channel management, direct sales, country coverage, pipeline, revenue, or equal activity volume in every market')
+Assert-Check $regionalLedgerBoundary 'Decision ledger preserves regional terminology and ownership boundaries' 'Decision ledger is missing the approved regional terminology or ownership boundary'
 Assert-Check ($html.Contains('<link rel="stylesheet" href="styles.css?v=anchor-20260824">')) 'Stylesheet uses the approved Anchor cache key' 'Stylesheet cache key is missing or altered'
 $furnitureImageRule = [regex]::Match($styles, '\.furniture-gallery\s+img\s*\{(?<declarations>[^}]*)\}', 'IgnoreCase')
 $wallpaperImageRule = [regex]::Match($styles, '\.wallpaper-proof-gallery\s+img\s*\{(?<declarations>[^}]*)\}', 'IgnoreCase')
@@ -79,8 +87,8 @@ $mobileTargetsPresent = $styles.Contains('.wordmark{width:44px;height:44px}') -a
     $styles.Contains('.actions .text-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;text-align:center;padding:.6rem}')
 Assert-Check ($max680Count -eq 1) 'Responsive CSS retains one consolidated max-width 680px block' 'Responsive CSS must contain exactly one max-width 680px block'
 Assert-Check $mobileTargetsPresent 'Mobile header, navigation, and action links enforce 44px targets' 'Mobile wordmark, menu, navigation, or action-link target rules are missing or altered'
-$orionLinkTargetsPresent = $styles.Contains('.architecture-row .text-link,.coverage-note .text-link{display:inline-flex;align-items:center;min-height:44px;max-width:100%}')
-Assert-Check $orionLinkTargetsPresent 'Predator Orion matrix and award links enforce 44px targets' 'Predator Orion matrix or award-context link target rules are missing or altered'
+$orionLinkTargetsPresent = $styles.Contains('.architecture-row .text-link{display:inline-flex;align-items:center;min-height:44px;max-width:100%}')
+Assert-Check $orionLinkTargetsPresent 'Predator Orion matrix link enforces a 44px target' 'Predator Orion matrix link target rule is missing or altered'
 
 $jsonLdMatch = [regex]::Match($html, '(?s)<script type="application/ld\+json">\s*(.*?)\s*</script>', 'IgnoreCase')
 $jsonLdValid = $false
@@ -243,6 +251,17 @@ $systemsSectionMatch = [regex]::Match($html, '(?s)<section\b[^>]*id="systems"[^>
 Assert-Check ($systemsSectionMatch.Success) 'Systems & Scale section exists' 'Systems & Scale section is missing'
 if ($systemsSectionMatch.Success) {
     $systemsHtml = $systemsSectionMatch.Value
+    $damCardCopy = 'Clear source content, translation partnerships, and review loops supported regional adaptation. Enterprise DAM/CMS publishing, asset replacement, version management, and obsolete-file removal kept current approved launch materials organized and easier for teams in all three Acer regions—EMEA, Pan America, and Pan Asia Pacific—to locate when needed.'
+    $damCardExact = "<article><strong>3 regions</strong><h3>Structured handoff and QA</h3><p>$damCardCopy</p></article>"
+    Assert-Check ($systemsHtml.Contains($damCardExact)) 'Structured handoff card uses the approved enterprise DAM/CMS workflow' 'Structured handoff card is missing or differs from the approved enterprise DAM/CMS wording'
+    $damForbiddenPattern = '(?i)\b(?:Adobe|AEM|email marketing|regional approval authority|managed all assets|final asset creation|created final assets|regional change notices?|regional asset-update notifications?|regional asset-update emails?)\b|\bre-announc(?:e|ed|ing)\s+(?:DAM|CMS|content-management)\s+changes?\b|\b(?:owned|administered|implemented)\s+(?:the\s+)?(?:enterprise\s+)?(?:DAM|CMS|platform)\b|\b(?:ranking|traffic|conversion|efficiency)\s+(?:increase|improvement|gain|metric|result)s?\b'
+    Assert-Check ($damCardExact -notmatch $damForbiddenPattern -and $systemsHtml -notmatch $damForbiddenPattern) 'Systems & Scale avoids unsupported DAM platform, authority, creation, count, and outcome claims' 'Systems & Scale contains an unsupported DAM platform, authority, asset-creation, stakeholder-count, or outcome claim'
+    $damLedgerBoundaryPresent = $ledger.Contains('designers supplied launch images/assets') -and
+        $ledger.Contains('publishing current assets to an enterprise DAM/CMS, unpublishing obsolete files') -and
+        $ledger.Contains('Clark did not notify or re-announce DAM/CMS asset changes to regional teams') -and
+        $ledger.Contains('These communications were not part of DAM/CMS change management and must remain internal-only') -and
+        $ledger.Contains('The exact platform remains unverified')
+    Assert-Check $damLedgerBoundaryPresent 'Decision ledger preserves the user-attested DAM/CMS workflow boundary' 'Decision ledger is missing the approved DAM/CMS workflow or platform boundary'
     $launchCommunicationBody = 'Across verified appearances in 2018, 2019, 2020, 2021, 2022, 2023, and 2024, Clark presented Predator and Acer gaming product stories at global launch events and in official Predator Gaming videos, translating complex hardware into clear, audience-ready messaging.'
     Assert-Check ($systemsHtml.Contains('Global launch communication') -and $systemsHtml.Contains('<strong>Representing Predator on the Global Stage</strong>')) 'Global launch communication proof is present in Systems & Scale' 'Global launch communication label or heading is missing'
     Assert-Check ($systemsHtml.Contains($launchCommunicationBody)) 'Global launch communication boundary is exact' 'Global launch communication boundary is missing or altered'
@@ -376,9 +395,20 @@ if ($laptopCase.Success) {
 
 $displayCards = [regex]::Matches($html, '<article\b[^>]*class="[^"]*display-proof-card[^"]*"[^>]*>', 'IgnoreCase')
 Assert-Check ($displayCards.Count -le 2) 'Display proof uses no more than two products' 'Display proof contains more than two product cards'
+$displaySectionMatch = [regex]::Match($html, '(?s)<section\b[^>]*id="display-proof"[^>]*>.*?</section>', 'IgnoreCase')
+$displayBreadthSentence = "These two 2026 launches are selected recent proof from broader assigned Predator and Acer Nitro gaming-display work across much of Clark’s Acer tenure; contribution and deliverables varied by launch."
+$displayContrastSentence = 'Predator XB273K 3D prioritizes immersive depth and 4K detail. Predator X34 F1 prioritizes competition-grade speed while preserving an ultrawide QD-OLED experience.'
+$displayIntroExact = "<p class=`"display-proof-intro`">$displayBreadthSentence $displayContrastSentence</p>"
+Assert-Check ($displaySectionMatch.Success -and $displaySectionMatch.Value.Contains($displayIntroExact)) 'Display proof introduces the exact approved breadth and product contrast' 'Display proof breadth sentence or existing product contrast is missing, altered, or reordered'
+$displayBreadthForbiddenPattern = '(?is)\b(?:all|every|entire)\b.{0,35}\b(?:gaming[- ]?)?(?:monitor|display)\s+portfolio\b|\b\d+\+?\s+(?:gaming[- ]?)?(?:monitors?|displays?)\b|\b(?:Predator X35|Predator Z57)\b|\b(?:older|historical|earlier)\b.{0,120}\b(?:product summar(?:y|ies)|page structure|image approval|final visual design|production)\b'
+Assert-Check ($displaySectionMatch.Success -and $displaySectionMatch.Value -notmatch $displayBreadthForbiddenPattern) 'Public display proof avoids total-portfolio, count, historical-product, and transferred-scope claims' 'Public display proof contains an unaudited total/count, historical product, or transferred recent-launch scope'
+$displayBreadthLedgerPresent = $ledger.Contains('broad assigned Predator and Acer Nitro gaming-monitor coverage over roughly a decade/much of his Acer tenure') -and
+    $ledger.Contains('Officially confirmed historical favorites are Predator X35') -and
+    $ledger.Contains('Predator Z57') -and
+    $ledger.Contains('Clark''s historical contribution remains user-attested and is not public in this wave.')
+Assert-Check $displayBreadthLedgerPresent 'Decision ledger preserves the display-breadth and historical-evidence boundary' 'Decision ledger is missing the approved display-breadth or historical-product boundary'
 
 if ($PublicationReady) {
-    $displaySectionMatch = [regex]::Match($html, '(?s)<section\b[^>]*id="display-proof"[^>]*>.*?</section>', 'IgnoreCase')
     $displaySectionPresent = $displaySectionMatch.Success
     Assert-Check $displaySectionPresent 'Publication gate: verified display proof is a complete section' 'Publication gate: verified display proof section is missing'
     Assert-Check ($displayCards.Count -eq 2) 'Publication gate: display proof contains exactly two verified products' 'Publication gate: display proof must contain exactly two product cards'
@@ -437,14 +467,14 @@ foreach ($row in $architectureRows) {
 $orionAudience = 'Desktop messaging varied by performance, chassis, cooling, and upgrade story; no fixed ladder is asserted'
 $orionContribution = "Clark wrote the global English product-page copy and messaging/KSP hierarchy; defined the page structure, content hierarchy, and overall layout direction; and presented Predator Orion X during the 2023 next@acer Global Press Conference. Specialist teams handled final visual production and page implementation."
 $orionAnnouncement = 'https://news.acer.com/acer-unleashes-the-predator-orion-x-desktop-and-curved-monitors-for-gaming-enthusiasts'
-$orionAwardContext = "The product received 2024 Red Dot Product Design, iF Design Award, Golden Pin Design Award, and Taiwan Excellence recognition. These are product/team awards, not page-performance proof or Clark's individual awards."
-$orionSourcesPresent = $html.Contains("href=`"$orionAnnouncement`"") -and
-    $html.Contains('href="https://www.acer.com/gb-en/awards/2024"') -and
-    $html.Contains('href="https://www.taiwanexcellence.org/en/award/product/1130588"')
+$orionSourcePresent = $html.Contains("href=`"$orionAnnouncement`"")
+$orionAwardInventoryAbsent = -not $html.Contains('Predator Orion X award context:') -and
+    -not $html.Contains('href="https://www.acer.com/gb-en/awards/2024"') -and
+    -not $html.Contains('href="https://www.taiwanexcellence.org/en/award/product/1130588"')
 Assert-Check ($html.Contains($orionAudience)) 'Predator Orion family and audience wording is preserved' 'Predator Orion family or audience wording is missing or altered'
 Assert-Check ($html.Contains($orionContribution)) 'Predator Orion X contribution and specialist-production boundary are exact' 'Predator Orion X contribution or specialist-production boundary is missing or altered'
-Assert-Check ($html.Contains($orionAwardContext)) 'Predator Orion X award context preserves the product/team boundary' 'Predator Orion X award context is missing or implies personal or page-performance proof'
-Assert-Check $orionSourcesPresent 'Predator Orion X uses the approved official announcement and award sources' 'A required Predator Orion X official source is missing or altered'
+Assert-Check $orionSourcePresent 'Predator Orion X uses the approved official announcement' 'The required Predator Orion X official announcement is missing or altered'
+Assert-Check $orionAwardInventoryAbsent 'Representative coverage omits the isolated Predator Orion X product-award inventory' 'Representative coverage contains the removed Predator Orion X product-award note or sources'
 Assert-Check ($html.Contains('<strong>Gaming desktops</strong><span>Predator Orion X; Predator Orion 7000; Acer Nitro 70</span>')) 'Gaming-desktop coverage uses the exact three representative products' 'Gaming-desktop coverage is missing or differs from the approved three-product list'
 $desktopSearchGuardPattern = '(?is)(?:Predator Orion 7000|Acer Nitro 70).{0,100}\b(?:flagship|gold standard|most flagship|identical platform)\b|\b(?:flagship|gold standard|most flagship|identical platform)\b.{0,100}(?:Predator Orion 7000|Acer Nitro 70)|Clark.{0,100}\b(?:sole\s+(?:SEO|GEO)|cod(?:e|ed|ing)|CMS|schema|rankings?|traffic|conversions?)\b|Clark.{0,100}\b(?:owned|led)\b.{0,60}\b(?:Predator Orion 7000|Acer Nitro 70)\b.{0,60}\b(?:page|launch)\b'
 Assert-Check ($html -notmatch $desktopSearchGuardPattern) 'Desktop coverage and Hub search proof avoid unsupported status, technical ownership, and outcomes' 'Desktop coverage or Hub search proof contains an unsupported status, technical-ownership, page/launch-ownership, or outcome claim'
@@ -453,7 +483,7 @@ $desktopEvidenceBoundaryPresent = $ledger.Contains('Clark attests to substantial
     $ledger.Contains('validate the separate names and current positioning only, not Clark''s authorship, page ownership, or launch ownership.')
 Assert-Check $desktopEvidenceBoundaryPresent 'Decision ledger preserves desktop authorship and technology-name boundaries' 'Decision ledger is missing the approved Predator Orion 7000, Acer Nitro 70, or CycloneX evidence boundary'
 $orionUnsupportedPattern = '(?is)Clark.{0,100}\b(?:designed|created)\b.{0,60}\b(?:Predator Orion X|industrial design)\b|Clark.{0,100}\b(?:owned|led)\b.{0,60}\b(?:event|keynote|page implementation|visual production)\b'
-Assert-Check ($html -notmatch $orionUnsupportedPattern) 'Predator Orion X avoids unsupported design, event, keynote, implementation, and award ownership' 'Predator Orion X contains an unsupported design, event, keynote, implementation, or individual-award claim'
+Assert-Check ($html -notmatch $orionUnsupportedPattern) 'Predator Orion X avoids unsupported design, event, keynote, and implementation ownership' 'Predator Orion X contains an unsupported design, event, keynote, or implementation claim'
 
 Assert-Check ($html -notmatch '(?i)performed well') 'No unsupported “performed well” claim exists' 'Found prohibited “performed well” outcome claim'
 $neoSafetyText = $html.Replace('no single standalone Neo tier is asserted', '')
