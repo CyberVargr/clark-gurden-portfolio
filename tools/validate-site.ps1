@@ -240,7 +240,7 @@ $systemsSectionMatch = [regex]::Match($html, '(?s)<section\b[^>]*id="systems"[^>
 Assert-Check ($systemsSectionMatch.Success) 'Systems & Scale section exists' 'Systems & Scale section is missing'
 if ($systemsSectionMatch.Success) {
     $systemsHtml = $systemsSectionMatch.Value
-    $launchCommunicationBody = 'Across verified appearances in 2019, 2020, 2021, and 2023, Clark presented Predator product stories at Acer global press and launch events, translating complex gaming hardware into clear, audience-ready messaging.'
+    $launchCommunicationBody = 'Across verified appearances in 2018, 2019, 2020, 2021, 2022, 2023, and 2024, Clark presented Predator and Acer gaming product stories at global launch events and in official Predator Gaming videos, translating complex hardware into clear, audience-ready messaging.'
     Assert-Check ($systemsHtml.Contains('Global launch communication') -and $systemsHtml.Contains('<strong>Representing Predator on the Global Stage</strong>')) 'Global launch communication proof is present in Systems & Scale' 'Global launch communication label or heading is missing'
     Assert-Check ($systemsHtml.Contains($launchCommunicationBody)) 'Global launch communication boundary is exact' 'Global launch communication boundary is missing or altered'
     $launchCommunicationMatch = [regex]::Match($systemsHtml, '(?s)<div class="launch-communication">.*?</div>\s*</div>')
@@ -250,18 +250,30 @@ if ($systemsSectionMatch.Success) {
     $launchAnchors = [regex]::Matches($launchLinksHtml, '<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', 'IgnoreCase, Singleline')
     $launchHrefs = @($launchAnchors | ForEach-Object { $_.Groups[1].Value })
     $expectedLaunchHrefs = @(
-        'https://tw.linkedin.com/in/clark-gurden',
-        'https://www.tech-critter.com/acer-energy-drink-predator-shot/',
-        'https://newsbytes.ph/2023/04/22/acer-trains-eyes-on-ai-sustainable-computers-gaming/'
+        'https://www.youtube.com/watch?v=2JW5_TxHyeY&amp;t=1985s',
+        'https://www.youtube.com/watch?v=_InEZv5HRA8&amp;t=2150s',
+        'https://www.youtube.com/watch?v=g76MVVTQyrc&amp;t=32s'
     )
     $launchLinkOrderExact = $launchHrefs.Count -eq 3 -and (($launchHrefs -join "`n") -eq ($expectedLaunchHrefs -join "`n"))
-    Assert-Check $launchLinkOrderExact 'Global launch evidence is exactly LinkedIn, Tech-Critter, and Newsbytes in order' 'Global launch evidence links are missing, extra, or out of order'
-    Assert-Check ($launchLinksHtml.Contains('>Independent 2020 Predator Shot event coverage <span aria-hidden="true">↗</span></a>')) 'Tech-Critter link uses the approved visible label' 'Tech-Critter link label is missing or altered'
+    Assert-Check $launchLinkOrderExact 'Global launch evidence is exactly the approved 2022, 2023, and 2024 official videos in order' 'Global launch evidence links are missing, extra, or out of order'
+    $expectedLaunchLabels = @(
+        '2022 next@acer — Clark introduced at approximately 33:10',
+        '2023 next@acer — Clark presenting Predator Orion X at approximately 35:50',
+        'Official Predator Gaming 2024 — Clark Gurden name slate at 00:35'
+    )
+    $launchLabels = @($launchAnchors | ForEach-Object {
+        $labelWithoutArrow = [regex]::Replace($_.Groups[2].Value, '<span\b[^>]*aria-hidden="true"[^>]*>.*?</span>', '', 'IgnoreCase, Singleline')
+        [System.Net.WebUtility]::HtmlDecode(([regex]::Replace($labelWithoutArrow, '<[^>]+>', ' '))).Trim()
+    })
+    $launchLabelsExact = $launchLabels.Count -eq 3 -and (($launchLabels -join "`n") -eq ($expectedLaunchLabels -join "`n"))
+    Assert-Check $launchLabelsExact 'Global launch evidence uses the exact three visible labels' 'A global launch evidence label is missing, altered, or out of order'
+    Assert-Check ($launchLinksHtml -notmatch [regex]::Escape('https://www.tech-critter.com/acer-energy-drink-predator-shot/')) 'Tech-Critter is absent from the visible launch links' 'Tech-Critter must remain internal corroboration and not appear in the public launch links'
+    Assert-Check ($ledger.Contains('https://www.tech-critter.com/acer-energy-drink-predator-shot/')) 'Tech-Critter remains recorded as internal corroboration' 'The decision ledger no longer records the Tech-Critter corroboration'
     Assert-Check (@($launchAnchors | Where-Object { $_.Value -notmatch 'rel="noopener noreferrer"' }).Count -eq 0) 'All global launch evidence links use noopener noreferrer' 'A global launch evidence link is missing noopener noreferrer'
     Assert-Check ($launchCommunicationHtml -notmatch '(?i)<(?:img|figure|picture|video|iframe|embed|object)\b') 'Global launch communication remains link-only' 'Global launch communication contains prohibited media'
     $privateScreenshotPattern = '(?i)\bscreenshot\b|\.codex[\\/]|OneDrive[\\/](?:Pictures|Documents)|[A-Za-z]:\\Users\\'
     Assert-Check ($launchCommunicationHtml -notmatch $privateScreenshotPattern) 'Private screenshot filename and path are absent from public launch proof' 'Public launch proof exposes a private screenshot reference or local path'
-    $launchForbiddenPattern = '(?i)\b(?:consecutive|2022|2024|official spokesperson|sole keynote|sole event|equal CEO|audience metrics|voice acting)\b|\b(?:launched|created|owned)\s+(?:the\s+)?Predator Shot\b|\bco[- ]?(?:hosted|keynoted)\b|\b(?:equal|shared)\s+(?:CEO\s+)?billing\b|\bkeynote\s+ownership\b|\bscript\s+ownership\b'
+    $launchForbiddenPattern = '(?i)\b(?:annual|annually|every[- ]year|consecutive|official spokesperson|sole keynote|sole event|equal CEO|audience metrics|voice acting|all gaming sections|FaZe partnership)\b|\b(?:launched|created|owned)\s+(?:the\s+)?Predator Shot\b|\bco[- ]?(?:hosted|keynoted)\b|\b(?:equal|shared)\s+(?:CEO\s+)?billing\b|\b(?:event|keynote|script|video|product|page)\s+(?:production\s+)?ownership\b|\b(?:script|video)\s+production\b|\b(?:wrote|authored|owned|prepared)\b[^.]{0,48}\b(?:event\s+scripts?|scripts?|CEO\s+dialogue)\b'
     Assert-Check ($launchCommunicationMatch.Success -and $launchCommunicationHtml -notmatch $launchForbiddenPattern) 'Global launch communication avoids unsupported title, year, ownership, billing, metric, and voice claims' 'Global launch communication contains an unsupported title, year, ownership, billing, metric, or voice claim'
 }
 
