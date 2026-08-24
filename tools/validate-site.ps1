@@ -102,11 +102,11 @@ Assert-Check $jsonLdValid 'JSON-LD has the canonical URL, approved role, LinkedI
 
 $visibleHtml = [regex]::Replace($html, '(?is)<(?:script|style)\b.*?</(?:script|style)>', ' ')
 $visibleText = [System.Net.WebUtility]::HtmlDecode([regex]::Replace($visibleHtml, '<[^>]+>', ' '))
-$bareCanonicalPattern = '(?i)(?<!Acer )\bNitro Blaze Link\b|\bNitro V laptop line\b|(?<!Predator )\b(?:Helios 18 AI|Triton 14 AI|Helios Neo|Triton Neo|Thronos Air|Rift 371|Gaming Desk)\b'
+$bareCanonicalPattern = '(?i)(?<!Acer )\b(?:Nitro Blaze Link|Nitro 70)\b|\bNitro V laptop line\b|(?<!Predator )\b(?:Helios 18 AI|Triton 14 AI|Helios Neo|Triton Neo|Orion 7000|Thronos Air|Rift 371|Gaming Desk)\b|(?<!Predator )(?<!Acer Nitro )\bCycloneX 360\b'
 Assert-Check ($visibleText -notmatch $bareCanonicalPattern) 'Visible product and model references use complete canonical names' 'Visible copy contains a shortened product or model name'
 $bareAcerNitroBrandPattern = '(?i)(?<!Acer )\bNitro\b'
 Assert-Check ($visibleText -notmatch $bareAcerNitroBrandPattern) 'Visible brand references use Acer Nitro in full' 'Visible copy contains a bare Nitro brand reference'
-$maintenanceCanonicalPattern = '(?i)(?<!Acer )\b(?:Nitro Blaze Link|Nitro 17|Nitro V 15)\b|(?<!Predator )\b(?:Helios 18 AI|Triton 14 AI|Helios Neo|Triton Neo|Thronos Air|Rift 371|Gaming Desk)\b'
+$maintenanceCanonicalPattern = '(?i)(?<!Acer )\b(?:Nitro Blaze Link|Nitro 17|Nitro V 15|Nitro 70)\b|(?<!Predator )\b(?:Helios 18 AI|Triton 14 AI|Helios Neo|Triton Neo|Orion 7000|Thronos Air|Rift 371|Gaming Desk)\b|(?<!Predator )(?<!Acer Nitro )\bCycloneX 360\b'
 Assert-Check (
     $ledger.Contains('Acer Nitro 17 and Acer Nitro V 15') -and
     $chatgptReview.Contains('Predator Thronos, Predator Thronos Air, Predator Rift 371, and Predator Gaming Desk') -and
@@ -150,6 +150,9 @@ $supportingModulesKeepCover = $styles.Contains('.tech-visuals>div img{width:100%
 $grapheneGetsIndividualContain = $styles.Contains('.tech-visuals>div img.graphene-module{object-fit:contain;background:#000}')
 Assert-Check ($html.Contains($grapheneImage) -and $grapheneClassCount -eq 1) 'Graphene TIM keeps its source asset, dimensions, loading, alt text, and unique individual class' 'Graphene TIM evidence markup is missing, altered, or its individual class is not unique'
 Assert-Check ($supportingModulesKeepCover -and $grapheneGetsIndividualContain) 'Only Graphene TIM is contained; the other supporting modules retain editorial cover frames' 'Technology Hub supporting-image crop rules are missing, blanket-altered, or no longer protect Graphene TIM'
+$technologyHubSearchSentence = "Across launches, Clark incorporated reciprocal product-to-technology-pillar links into content planning as part of the site’s search architecture, and later structured FAQs to support search and answer-engine discovery."
+$technologyHubMatch = [regex]::Match($html, '(?s)<article class="case tech-hub"\s+id="technology-hub">.*?</article>', 'IgnoreCase')
+Assert-Check ($technologyHubMatch.Success -and $technologyHubMatch.Value.Contains($technologyHubSearchSentence)) 'Technology Hub includes the exact reciprocal-link and FAQ discovery workflow' 'Technology Hub search-architecture sentence is missing or altered'
 
 $externalTargets = [regex]::Matches($html, '<a\b[^>]*target="_blank"[^>]*>', 'IgnoreCase')
 $unsafeTargets = @($externalTargets | Where-Object { $_.Value -notmatch 'rel="noopener noreferrer"' })
@@ -442,7 +445,13 @@ Assert-Check ($html.Contains($orionAudience)) 'Predator Orion family and audienc
 Assert-Check ($html.Contains($orionContribution)) 'Predator Orion X contribution and specialist-production boundary are exact' 'Predator Orion X contribution or specialist-production boundary is missing or altered'
 Assert-Check ($html.Contains($orionAwardContext)) 'Predator Orion X award context preserves the product/team boundary' 'Predator Orion X award context is missing or implies personal or page-performance proof'
 Assert-Check $orionSourcesPresent 'Predator Orion X uses the approved official announcement and award sources' 'A required Predator Orion X official source is missing or altered'
-Assert-Check ($html.Contains('<strong>Gaming desktops</strong><span>Predator Orion X; Acer Nitro gaming desktops</span>')) 'Gaming-desktop coverage names Predator Orion X' 'Gaming-desktop coverage does not use the verified Predator Orion X representative product'
+Assert-Check ($html.Contains('<strong>Gaming desktops</strong><span>Predator Orion X; Predator Orion 7000; Acer Nitro 70</span>')) 'Gaming-desktop coverage uses the exact three representative products' 'Gaming-desktop coverage is missing or differs from the approved three-product list'
+$desktopSearchGuardPattern = '(?is)(?:Predator Orion 7000|Acer Nitro 70).{0,100}\b(?:flagship|gold standard|most flagship|identical platform)\b|\b(?:flagship|gold standard|most flagship|identical platform)\b.{0,100}(?:Predator Orion 7000|Acer Nitro 70)|Clark.{0,100}\b(?:sole\s+(?:SEO|GEO)|cod(?:e|ed|ing)|CMS|schema|rankings?|traffic|conversions?)\b|Clark.{0,100}\b(?:owned|led)\b.{0,60}\b(?:Predator Orion 7000|Acer Nitro 70)\b.{0,60}\b(?:page|launch)\b'
+Assert-Check ($html -notmatch $desktopSearchGuardPattern) 'Desktop coverage and Hub search proof avoid unsupported status, technical ownership, and outcomes' 'Desktop coverage or Hub search proof contains an unsupported status, technical-ownership, page/launch-ownership, or outcome claim'
+$desktopEvidenceBoundaryPresent = $ledger.Contains('Clark attests to substantial writing for Predator Orion 7000 and distinct messaging for Acer Nitro 70.') -and
+    $ledger.Contains('Predator CycloneX 360 is not Acer Nitro CycloneX 360') -and
+    $ledger.Contains('validate the separate names and current positioning only, not Clark''s authorship, page ownership, or launch ownership.')
+Assert-Check $desktopEvidenceBoundaryPresent 'Decision ledger preserves desktop authorship and technology-name boundaries' 'Decision ledger is missing the approved Predator Orion 7000, Acer Nitro 70, or CycloneX evidence boundary'
 $orionUnsupportedPattern = '(?is)Clark.{0,100}\b(?:designed|created)\b.{0,60}\b(?:Predator Orion X|industrial design)\b|Clark.{0,100}\b(?:owned|led)\b.{0,60}\b(?:event|keynote|page implementation|visual production)\b'
 Assert-Check ($html -notmatch $orionUnsupportedPattern) 'Predator Orion X avoids unsupported design, event, keynote, implementation, and award ownership' 'Predator Orion X contains an unsupported design, event, keynote, implementation, or individual-award claim'
 

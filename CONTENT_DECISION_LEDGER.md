@@ -42,6 +42,14 @@ This ledger records the evidence boundary and publication decisions for Clark Gu
 - Gaming-desktop representative coverage names Predator Orion X. Other Orion roster details remain unresolved and no tier ladder is inferred.
 - The downloadable portfolio PDF and résumé remain accurate at broader Predator Orion family level and are not materially contradictory. They remain unchanged in this website-only evidence-strengthening round.
 
+## Technology Hub search architecture and desktop coverage decision
+
+- Representative gaming-desktop coverage names exactly Predator Orion X, Predator Orion 7000, and Acer Nitro 70. Predator Orion X retains its existing matrix evidence and award context; no new case, architecture row, or ownership claim is added.
+- Clark attests to substantial writing for Predator Orion 7000 and distinct messaging for Acer Nitro 70. The official Predator Orion 7000 page https://www.acer.com/us-en/predator/desktops-and-all-in-ones/predator-orion/orion-7000 and official Acer Nitro 70 page https://www.acer.com/us-en/desktops-and-all-in-ones/nitro-desktops/nitro-70-amd validate the separate names and current positioning only, not Clark's authorship, page ownership, or launch ownership.
+- Keep the technology names distinct: Predator CycloneX 360 is not Acer Nitro CycloneX 360, and no identical-platform claim is supported. The official Predator Gaming Technology Hub https://www.acer.com/us-en/predator/gaming-technology shows its Predator CycloneX 360 module linking to Predator Orion 7000; the official Acer Nitro 70 page's Explore Tech path links back to the Hub.
+- Clark attests that reciprocal product-to-technology-pillar links were incorporated into content planning as part of the site's search architecture and that FAQs were later structured to support search and answer-engine discovery. This is process evidence only, with no claim of sole SEO/GEO ownership, coding/CMS/schema ownership, ranking, traffic, conversion, or other outcomes.
+- Do not describe Predator Orion 7000 or Acer Nitro 70 as flagship, gold standard, or “most flagship”; do not infer page or launch ownership or authorship from live pages. PDF, résumé, metadata, structured data, styles, and assets remain unchanged.
+
 ## Verified display evidence decision
 
 - Clark confirmed assigned-launch contribution for Predator XB273K 3D and Predator X34 F1. Both products were announced May 29, 2026.
@@ -87,7 +95,7 @@ This ledger records the evidence boundary and publication decisions for Clark Gu
 | Portfolio surface | Decision | Evidence and wording boundary |
 | --- | --- | --- |
 | Case 01 - Predator Atlas 8 | Keep | Retain the existing evidence, live link, product-summary ownership, and singular reviewer-guide ownership. Do not extend those document claims to other launches. |
-| Case 02 - Predator Gaming Technology Hub | Keep | Retain the flagship placement and end-to-end information-architecture, navigation, hierarchy, copy, and module-update ownership already supported by the source record. |
+| Case 02 - Predator Gaming Technology Hub | Strengthen existing copy | Retain the flagship placement and end-to-end information-architecture, navigation, hierarchy, copy, and module-update ownership; add only the user-attested reciprocal-link planning and FAQ/answer-engine workflow, without technical-implementation or outcome claims. |
 | Case 03 - Predator & Acer Nitro | Update | Keep Acer Nitro Blaze Link evidence and link. Use assigned-launch scope, benefit-led differentiation, and contribution-varied language. Do not describe Acer Nitro as a compromised Predator tier. |
 | Case 04 - Predator Helios 18 AI and Predator Triton 14 AI | Update | Keep both images and links. State global English copymaster, KSP hierarchy, claims/disclaimer language, technical-benefit translation, and messaging review of implemented page content within assigned launches. Do not use review/approval language without formal sign-off proof. |
 | Cases 03/04 - Gaming Portfolio Architecture | Strengthen the existing associated editorial block | Keep the six safe family/product rows and positioning contrast without creating a sixth principal case. Use Predator Orion X as the verified representative Orion launch with the approved contribution, specialist-production boundary, official announcement, and product/team award context. Neo and other Orion descriptions remain product-specific, unresolved where unaudited, and non-laddered. |
@@ -95,6 +103,6 @@ This ledger records the evidence boundary and publication decisions for Clark Gu
 | Case 05 - Gaming Furniture | Keep | Retain existing copy/messaging ownership and live links. Do not imply page-design, photography, industrial-design, or visual-art ownership. |
 | Brand Worldbuilding & Creative Direction | Expand the unnumbered creative-direction proof | Add compact text-only 2018 Predatorverse and 2019 Summon Your Strength sections with agency/award boundaries; retain exactly Night City Merc and The New Evolution with faithful 1600x900 review derivatives and the approved wallpaper scope. |
 | Case 06 - Technical Product-Sheet Governance | Add | Use an original public-specification reconstruction to show interpretation, reconciliation, governance, and audience adaptation. Do not reproduce or imitate an employer document. |
-| Representative Portfolio Coverage | Add as category-level context | Use representative examples only and state that contribution varied by launch. The Displays cell names Predator XB273K 3D and Predator X34 F1; do not expand it into an unaudited SKU gallery. |
+| Representative Portfolio Coverage | Update category-level context | Use representative examples only and state that contribution varied by launch. The Gaming desktops cell names Predator Orion X, Predator Orion 7000, and Acer Nitro 70; the Displays cell names Predator XB273K 3D and Predator X34 F1. Do not expand either into an unaudited SKU gallery. |
 | Downloadable portfolio PDF | Update | Insert the architecture/coverage page after the laptop page and align legacy Nitro and laptop wording with assigned-launch and messaging-review decisions. |
 | Downloadable résumé | Update | Reflect gaming-PC architecture concisely with assigned-launch scope and audience-adapted proof priorities. Avoid internal guardrail language and unsupported outcomes. |
