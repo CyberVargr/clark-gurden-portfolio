@@ -65,7 +65,7 @@ $regionalLedgerBoundary = $ledger.Contains("Acer's official public operating-reg
     $ledger.Contains('Pan America as covering North and Latin America') -and
     $ledger.Contains('does not claim regional organization ownership, distributor or channel management, direct sales, country coverage, pipeline, revenue, or equal activity volume in every market')
 Assert-Check $regionalLedgerBoundary 'Decision ledger preserves regional terminology and ownership boundaries' 'Decision ledger is missing the approved regional terminology or ownership boundary'
-Assert-Check ($html.Contains('<link rel="stylesheet" href="styles.css?v=anchor-20260824">')) 'Stylesheet uses the approved Anchor cache key' 'Stylesheet cache key is missing or altered'
+Assert-Check ($html.Contains('<link rel="stylesheet" href="styles.css?v=writing-20260825">')) 'Stylesheet uses the approved writing-proof cache key' 'Stylesheet cache key is missing or altered'
 $furnitureImageRule = [regex]::Match($styles, '\.furniture-gallery\s+img\s*\{(?<declarations>[^}]*)\}', 'IgnoreCase')
 $wallpaperImageRule = [regex]::Match($styles, '\.wallpaper-proof-gallery\s+img\s*\{(?<declarations>[^}]*)\}', 'IgnoreCase')
 $furnitureImageRuleSafe = $furnitureImageRule.Success -and
@@ -81,11 +81,13 @@ $wallpaperImageRuleSafe = $wallpaperImageRule.Success -and
 Assert-Check $furnitureImageRuleSafe 'Furniture images retain natural sizing without an aspect-ratio override' 'Furniture image sizing rule is missing, altered, or still forces aspect-ratio:auto'
 Assert-Check $wallpaperImageRuleSafe 'Wallpaper images retain natural sizing without an aspect-ratio override' 'Wallpaper image sizing rule is missing, altered, or still forces aspect-ratio:auto'
 $max680Count = [regex]::Matches($styles, '@media\s*\(\s*max-width\s*:\s*680px\s*\)', 'IgnoreCase').Count
+$max900Count = [regex]::Matches($styles, '@media\s*\(\s*max-width\s*:\s*900px\s*\)', 'IgnoreCase').Count
 $mobileTargetsPresent = $styles.Contains('.wordmark{width:44px;height:44px}') -and
     $styles.Contains('.nav-toggle{display:inline-flex;align-items:center;min-height:44px}') -and
     $styles.Contains('.site-nav a{display:inline-flex;align-items:center;min-height:44px}') -and
     $styles.Contains('.actions .text-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;text-align:center;padding:.6rem}')
 Assert-Check ($max680Count -eq 1) 'Responsive CSS retains one consolidated max-width 680px block' 'Responsive CSS must contain exactly one max-width 680px block'
+Assert-Check ($max900Count -eq 1) 'Responsive CSS retains one consolidated max-width 900px block' 'Responsive CSS must contain exactly one max-width 900px block'
 Assert-Check $mobileTargetsPresent 'Mobile header, navigation, and action links enforce 44px targets' 'Mobile wordmark, menu, navigation, or action-link target rules are missing or altered'
 $orionLinkTargetsPresent = $styles.Contains('.architecture-row .text-link{display:inline-flex;align-items:center;min-height:44px;max-width:100%}')
 Assert-Check $orionLinkTargetsPresent 'Predator Orion matrix link enforces a 44px target' 'Predator Orion matrix link target rule is missing or altered'
@@ -393,6 +395,95 @@ if ($laptopCase.Success) {
     Assert-Check $principalLaptopEvidence 'Laptop evidence remains limited to Predator Helios 18 AI and Predator Triton 14 AI' 'Laptop evidence must contain exactly Predator Helios 18 AI and Predator Triton 14 AI'
 }
 
+$writingSectionMatch = [regex]::Match($html, '(?s)<section\b[^>]*id="writing-proof"[^>]*>.*?</section>', 'IgnoreCase')
+$writingSectionPresent = $writingSectionMatch.Success
+Assert-Check $writingSectionPresent 'Selected Writing Voice is a complete section' 'Selected Writing Voice section is missing or structurally incomplete'
+
+if ($writingSectionPresent) {
+    $writingHtml = $writingSectionMatch.Value
+    $writingCards = [regex]::Matches($writingHtml, '<article\b[^>]*class="[^"]*writing-proof-card[^"]*"[^>]*>', 'IgnoreCase')
+    $writingScopeSentence = 'Clark wrote the selected English passages; contribution elsewhere on each page varied. Product Management and technology partners supplied required specifications, claims, and partner language. Specialist teams retained final visual-design and page-production responsibility. Official pages verify published wording and product context; authorship is user-attested.'
+    $writingFixtures = @(
+        @{
+            Context = 'immersive-display'
+            Label = 'Immersive display narrative'
+            Model = 'Predator X35'
+            Quote = '“pulls you in, wraps around your vision and refuses to let go.”'
+            Explanation = 'Turns curvature and ultrawide scale into a felt experience before specifications become the proof.'
+            Url = 'https://www.acer.com/gb-en/predator/monitors/x35'
+        },
+        @{
+            Context = 'lifestyle-system'
+            Label = 'Lifestyle and system metaphor'
+            Model = 'Predator Thronos Air'
+            Quote = '“Take your place upon the throne.”'
+            Explanation = 'Uses one governing metaphor to unify displays, enclosure, comfort, and the ritual of a complete gaming setup.'
+            Url = 'https://www.acer.com/ph-en/predator/chairs/thronos/thronos-air'
+        },
+        @{
+            Context = 'multi-audience-portability'
+            Label = 'Multi-audience portable performance'
+            Model = 'Predator Helios Neo 14'
+            Quote = '“Make every environment your arena, every café a studio, and every space your domain.”'
+            Explanation = 'Unifies professional, creator, and competitive-gaming use cases under one portable-performance narrative.'
+            Url = 'https://www.acer.com/gb-en/predator/laptops/helios/helios-neo-14'
+        },
+        @{
+            Context = 'competitive-peripheral'
+            Label = 'Competitive peripheral precision'
+            Model = 'Predator Cestus 535'
+            Quote = '“move first, stay sharp, and finish clean.”'
+            Explanation = 'Compresses tracking, response, and control into a short, action-led competitive promise.'
+            Url = 'https://www.acer.com/us-en/predator/accessories/gaming-mice/predator-cestus-535'
+        }
+    )
+
+    Assert-Check ($writingSectionMatch.Value -match 'aria-labelledby="writing-proof-title"' -and $writingHtml.Contains('<h3 id="writing-proof-title">One Predator voice, adapted to four buyer contexts.</h3>')) 'Selected Writing Voice has the approved accessible heading' 'Selected Writing Voice heading or accessible label is missing or altered'
+    Assert-Check ($writingCards.Count -eq 4) 'Selected Writing Voice contains exactly four examples' 'Selected Writing Voice must contain exactly four examples'
+    Assert-Check ($writingHtml -notmatch '(?i)<(?:img|picture|figure|video|iframe|embed|object)\b') 'Selected Writing Voice remains image-free' 'Selected Writing Voice contains prohibited media'
+    Assert-Check ($writingHtml -notmatch 'class="[^"]*case-number[^"]*"') 'Selected Writing Voice remains unnumbered' 'Selected Writing Voice uses numbered-case styling'
+    Assert-Check ($html -notmatch '(?is)<nav\b.*?href="#writing-proof".*?</nav>') 'Selected Writing Voice remains outside navigation' 'Selected Writing Voice has been added to navigation'
+    Assert-Check ($writingHtml.Contains($writingScopeSentence)) 'Selected Writing Voice preserves the exact shared authorship boundary' 'Selected Writing Voice shared authorship boundary is missing or altered'
+
+    $previousWritingIndex = -1
+    foreach ($fixture in $writingFixtures) {
+        $contextOpen = "<article class=`"writing-proof-card`" data-writing-context=`"$($fixture.Context)`">"
+        $modelIndex = $writingHtml.IndexOf("<h4>$($fixture.Model)</h4>", [System.StringComparison]::Ordinal)
+        $approvedQuote = "<blockquote cite=`"$($fixture.Url)`">$($fixture.Quote)</blockquote>"
+        $approvedAnchorStart = "<a class=`"text-link`" href=`"$($fixture.Url)`" target=`"_blank`" rel=`"noopener noreferrer`">"
+        $fixtureComplete = $writingHtml.Contains($contextOpen) -and
+            $writingHtml.Contains("<p class=`"writing-proof-label`">$($fixture.Label)</p>") -and
+            $writingHtml.Contains("<h4>$($fixture.Model)</h4>") -and
+            $writingHtml.Contains($approvedQuote) -and
+            $writingHtml.Contains("<p>$($fixture.Explanation)</p>") -and
+            $writingHtml.Contains($approvedAnchorStart)
+        Assert-Check $fixtureComplete "Selected writing example is exact: $($fixture.Model)" "Selected writing example is missing or altered: $($fixture.Model)"
+        Assert-Check ($modelIndex -gt $previousWritingIndex) "Selected writing order is correct through $($fixture.Model)" "Selected writing examples are out of approved order at $($fixture.Model)"
+        $previousWritingIndex = $modelIndex
+    }
+
+    $writingQuotes = [regex]::Matches($writingHtml, '<blockquote\b[^>]*>.*?</blockquote>', 'IgnoreCase,Singleline')
+    $writingLinks = [regex]::Matches($writingHtml, '<a\b[^>]*class="[^"]*text-link[^"]*"[^>]*>', 'IgnoreCase')
+    Assert-Check ($writingQuotes.Count -eq 4 -and $writingLinks.Count -eq 4) 'Selected Writing Voice uses one quote and one source link per example' 'Selected Writing Voice quote or source-link count is incorrect'
+    Assert-Check (@($writingLinks | Where-Object { $_.Value -notmatch 'target="_blank"' -or $_.Value -notmatch 'rel="noopener noreferrer"' }).Count -eq 0) 'All selected-writing source links use safe external-link attributes' 'A selected-writing source link is missing target or noopener noreferrer'
+
+    $writingForbiddenPattern = '(?i)\b(?:complete|entire)\s+page\s+(?:authorship|ownership)\b|\bpartner[- ]language\s+authorship\b|\bsole\s+(?:author|owner|ownership)\b|\b(?:owned|created)\s+(?:the\s+)?(?:product summary|final visual design|page production)\b|\b(?:pre[- ]AI|before AI|AI[- ]written)\b|\b(?:award-winning|resulted in|drove|increased)\b'
+    Assert-Check ($writingHtml -notmatch $writingForbiddenPattern) 'Selected Writing Voice avoids unsupported ownership, outcome, award, and AI claims' 'Selected Writing Voice contains an unsupported ownership, outcome, award, or AI claim'
+
+    $writingSectionIndex = $html.IndexOf('id="writing-proof"', [System.StringComparison]::Ordinal)
+    $architectureIndex = $html.IndexOf('<section class="portfolio-architecture"', [System.StringComparison]::Ordinal)
+    $displayIndex = $html.IndexOf('id="display-proof"', [System.StringComparison]::Ordinal)
+    Assert-Check ($architectureIndex -ge 0 -and $writingSectionIndex -gt $architectureIndex -and $displayIndex -gt $writingSectionIndex) 'Selected Writing Voice sits between Portfolio Coverage and Display Messaging Proof' 'Selected Writing Voice placement is incorrect'
+
+    $writingCssTarget = '.writing-proof .text-link{display:inline-block;padding:.55rem 0}'
+    Assert-Check ($styles.Contains($writingCssTarget)) 'Selected-writing links enforce 44px targets' 'Selected-writing link target sizing is missing or altered'
+
+    $writingLedgerPresent = $ledger.Contains('Official pages verify the published wording and product context only; authorship is user-attested.') -and
+        $ledger.Contains('Do not transfer the 2026 display-launch contribution boundary to Predator X35.') -and
+        $ledger.Contains('Metadata, structured data, navigation, downloadable portfolio PDF, and résumé remain unchanged.')
+    Assert-Check $writingLedgerPresent 'Decision ledger preserves selected-writing evidence and artifact boundaries' 'Decision ledger is missing selected-writing evidence or artifact boundaries'
+}
+
 $displayCards = [regex]::Matches($html, '<article\b[^>]*class="[^"]*display-proof-card[^"]*"[^>]*>', 'IgnoreCase')
 Assert-Check ($displayCards.Count -le 2) 'Display proof uses no more than two products' 'Display proof contains more than two product cards'
 $displaySectionMatch = [regex]::Match($html, '(?s)<section\b[^>]*id="display-proof"[^>]*>.*?</section>', 'IgnoreCase')
@@ -403,9 +494,9 @@ Assert-Check ($displaySectionMatch.Success -and $displaySectionMatch.Value.Conta
 $displayBreadthForbiddenPattern = '(?is)\b(?:all|every|entire)\b.{0,35}\b(?:gaming[- ]?)?(?:monitor|display)\s+portfolio\b|\b\d+\+?\s+(?:gaming[- ]?)?(?:monitors?|displays?)\b|\b(?:Predator X35|Predator Z57)\b|\b(?:older|historical|earlier)\b.{0,120}\b(?:product summar(?:y|ies)|page structure|image approval|final visual design|production)\b'
 Assert-Check ($displaySectionMatch.Success -and $displaySectionMatch.Value -notmatch $displayBreadthForbiddenPattern) 'Public display proof avoids total-portfolio, count, historical-product, and transferred-scope claims' 'Public display proof contains an unaudited total/count, historical product, or transferred recent-launch scope'
 $displayBreadthLedgerPresent = $ledger.Contains('broad assigned Predator and Acer Nitro gaming-monitor coverage over roughly a decade/much of his Acer tenure') -and
-    $ledger.Contains('Officially confirmed historical favorites are Predator X35') -and
+    $ledger.Contains('Predator X35 appears publicly only in Selected Writing Voice as a user-attested excerpt') -and
     $ledger.Contains('Predator Z57') -and
-    $ledger.Contains('Clark''s historical contribution remains user-attested and is not public in this wave.')
+    $ledger.Contains('internal historical breadth context only')
 Assert-Check $displayBreadthLedgerPresent 'Decision ledger preserves the display-breadth and historical-evidence boundary' 'Decision ledger is missing the approved display-breadth or historical-product boundary'
 
 if ($PublicationReady) {
