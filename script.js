@@ -23,3 +23,27 @@ document.addEventListener('keydown', event => {
 });
 
 document.querySelector('#year').textContent = new Date().getFullYear();
+
+const focusLabels = {
+  strategy: 'Product & Portfolio Strategy',
+  creative: 'Creative & Brand Voice',
+  technical: 'Technical & B2B Enablement'
+};
+
+const focusMode = new URLSearchParams(window.location.search).get('focus');
+
+if (Object.hasOwn(focusLabels, focusMode)) {
+  document.body.dataset.focusMode = focusMode;
+
+  document.querySelectorAll('[data-focus-section]').forEach(section => {
+    const modes = section.dataset.focus?.split(/\s+/) ?? [];
+    section.hidden = !modes.includes(focusMode);
+  });
+
+  const focusStatus = document.querySelector('.focus-status');
+  const focusName = document.querySelector('[data-focus-name]');
+  focusStatus.hidden = false;
+  focusName.textContent = focusLabels[focusMode];
+
+  document.querySelector(`[data-focus-route="${focusMode}"]`)?.setAttribute('aria-current', 'page');
+}
