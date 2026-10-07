@@ -35,6 +35,9 @@ const focusMode = new URLSearchParams(window.location.search).get('focus');
 if (Object.hasOwn(focusLabels, focusMode)) {
   document.body.dataset.focusMode = focusMode;
 
+  // Systems is omitted from some focused views; navigation must restore it.
+  nav?.querySelector('a[href="#systems"]')?.setAttribute('href', './#systems');
+
   document.querySelectorAll('[data-focus-section]').forEach(section => {
     const modes = section.dataset.focus?.split(/\s+/) ?? [];
     section.hidden = !modes.includes(focusMode);

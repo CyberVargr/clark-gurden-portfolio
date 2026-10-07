@@ -2,7 +2,7 @@
 
 A dependency-free, single-page static portfolio. Open `index.html` through a local web server; `styles.css` contains the visual system and responsive layouts, and `script.js` handles the mobile menu and current year.
 
-The canonical positioning is “Clark Gurden | Senior Product Marketing & Global Brand Strategy.” The hero must frame the work through Gaming Hardware, Portfolio Architecture, and Global GTM & Enablement, with supporting copy that demonstrates positioning, claims governance, launch systems, technical sales enablement, and brand worldbuilding rather than reducing the role to copywriting.
+The hero positioning remains “Senior Product Marketing & Global Brand Strategy.” The page title is “Clark Gurden | Product Marketing, Brand Strategy & Technical Enablement.” The hero frames Consumer & Commercial Hardware, Portfolio Architecture, and Global GTM & Enablement without reducing the role to copywriting. Current residence is the United States; Acer headquarters in Taiwan remains historical experience. Do not infer a city, work authorization, or a replacement phone number. The three focused views serve different hiring needs; do not duplicate the site by geography. Show the exact résumé content diff to Clark before replacing the public download.
 
 ## Structure
 
