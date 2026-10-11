@@ -13,7 +13,7 @@ Do not rewrite the site immediately. First produce a prioritized critique ground
 3. `script.js` - mobile navigation behavior
 4. `AGENTS.md` - mandatory factual and visual guardrails
 5. `Clark_Gurden_Portfolio_2026.pdf` - corrected source portfolio
-6. `Clark_Gurden_Resume_2026.docx` - current resume
+6. `Clark_Gurden_Resume_2026.pdf` - current public resume
 
 `AGENTS.md` is authoritative. Flag any requested change that would conflict with it.
 
@@ -48,7 +48,7 @@ Primary audiences are recruiters, hiring managers, Heads of Marketing, and Produ
 ## Non-negotiable factual checks
 
 - Acer tenure is April 2016-July 2026.
-- Product summaries were created only for Predator Atlas 8 and Acer Nitro Blaze Link.
+- Product summaries include Predator Atlas 8 and Acer Nitro Blaze Link, plus pre-launch product-summary preparation for Predator Atlas 7 before Clark left Acer in July 2026. Predator Atlas 7 is supporting family breadth, not a completed-launch or final-publication claim.
 - One reviewer guide was created, for Predator Atlas 8 only. Never pluralize it.
 - Recent laptop/display work may claim a global English copymaster plus review/approval of global product-page visual content only where supported.
 - Predator Gaming Technology was Clark's end-to-end creation: information architecture, layout/structure, navigation, icon presentation, content hierarchy, copy decisions, and continued module updates.
