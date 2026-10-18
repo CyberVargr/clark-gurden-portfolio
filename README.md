@@ -1,5 +1,7 @@
 # Clark Gurden Product Marketing Portfolio
 
+Moving to another PC? Start with [HANDOFF.md](HANDOFF.md) for the current decisions, guardrails, repository/branch state, preview instructions, and deployment safety notes.
+
 A dependency-free, single-page static portfolio. Open `index.html` through a local web server; `styles.css` contains the visual system and responsive layouts, and `script.js` handles the mobile menu and current year.
 
 The hero positioning remains “Senior Product Marketing & Global Brand Strategy.” The page title is “Clark Gurden | Product Marketing, Brand Strategy & Technical Enablement.” The hero frames Consumer & Commercial Hardware, Portfolio Architecture, and Global GTM & Enablement without reducing the role to copywriting. Current residence is the Greater Lansing area, Michigan, United States; Acer headquarters in Taiwan remains historical experience. Do not infer a municipality, street address, or work authorization. The public contact phone is +1 (517) 643-4602. The three focused views serve different hiring needs; do not duplicate the site by geography. Show the exact résumé content diff to Clark before replacing the public download.
