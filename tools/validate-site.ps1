@@ -129,7 +129,7 @@ Assert-Check ($html -match '(?s)Greater Lansing area, Michigan · Global scope</
 Assert-Check ($html.Contains('<h3>Technical Product-Sheet Documentation</h3>') -and $html.Contains('<h3>Human review at scale</h3>')) 'Approved documentation and human-review headings exist' 'Approved documentation or human-review heading is missing'
 Assert-Check ($html.Contains('<li>Claims substantiation</li>') -and $html.Contains('<li>Partner and tender documentation</li>')) 'Capability labels describe substantiation and documentation' 'Approved capability labels are missing'
 Assert-Check ($html.Contains('verified claims and disclaimers') -and -not $html.Contains('governed claims and disclaimers')) 'Case copy explicitly uses verified claims and disclaimers' 'Case copy reverted to governed claims or lost the approved phrase'
-Assert-Check ($html.Contains('href="downloads/Clark_Gurden_Resume_2026.pdf?v=20261018" download="Clark_Gurden_Resume_2026.pdf"')) 'Resume link and saved filename match the approved replacement' 'Resume link, version, or download filename is stale'
+Assert-Check ($html.Contains('href="downloads/Clark_Gurden_Resume_2026.pdf?v=20261019" download="Clark_Gurden_Resume_2026.pdf"')) 'Resume link and saved filename match the approved replacement' 'Resume link, version, or download filename is stale'
 Assert-Check ($html -notmatch '(?i)corrected') 'Public version strings omit the obsolete correction label' 'Obsolete correction label remains in public HTML'
 
 $bareCanonicalPattern = '(?i)(?<!Acer )\b(?:Nitro Blaze Link|Nitro 70)\b|\bNitro V laptop line\b|(?<!Predator )\b(?:Helios 18 AI|Triton 14 AI|Helios Neo|Triton Neo|Orion 7000|Thronos Air|Rift 371|Gaming Desk)\b|(?<!Predator )(?<!Acer Nitro )\bCycloneX 360\b'
@@ -613,16 +613,16 @@ if (Test-Path -LiteralPath $resumePath) {
     $resumeReadCode = 'from pypdf import PdfReader; import sys; print(" ".join(" ".join(p.extract_text().split()) for p in PdfReader(sys.argv[1]).pages))'
     $resumeText = (& $resumePython -c $resumeReadCode $resumePath) -join ' '
     if ($LASTEXITCODE -ne 0) { throw 'Public resume PDF text extraction failed' }
-    # October 18 user-supplied replacement, reported by the user as audited. This file
+    # October 19 user-supplied replacement, approved for publication. This file
     # supplies current content fixtures without changing website scope boundaries.
-    $approvedResumeHash = 'AC3656BB29F6B5F0492FE65DEC298D5A1676486EE49108491F6A2A235E400C9B'
+    $approvedResumeHash = 'C6AF5D64126D1E1F79859E57F4595BD8B36BA9BA44707DE67525CB9B810EDD44'
     # A binary rebuild can change this hash without changing approved text.
     # Keep this diagnostic advisory; the content assertions below are blocking.
     if ((Get-FileHash -Algorithm SHA256 -LiteralPath $resumePath).Hash -ne $approvedResumeHash) {
-        Write-Warning 'Resume binary differs from the October 18 reference. Inspect the rendered PDF; content validation continues.'
+        Write-Warning 'Resume binary differs from the October 19 reference. Inspect the rendered PDF; content validation continues.'
     }
     else {
-        Write-Host 'INFO  Resume matches the October 18 reference binary'
+        Write-Host 'INFO  Resume matches the October 19 reference binary'
     }
     Assert-Check ($resumeText.Contains('Senior Technology Copywriter | Product Messaging, Positioning and Launches')) 'Resume has the approved positioning header' 'Resume positioning header is missing or stale'
     Assert-Check ($resumeText.Contains('Greater Lansing, Michigan | U.S. Remote | Authorized to work in the U.S.') -and $resumeText.Contains('(517) 643-4602')) 'Resume has the approved location, authorization, and contact details' 'Resume location, authorization, or contact details differ from the approved file'
