@@ -119,6 +119,7 @@ $visibleText = [System.Net.WebUtility]::HtmlDecode([regex]::Replace($visibleHtml
 # are deliberately excluded from this terminology boundary.
 $readerAttributes = [regex]::Matches($html, '(?is)\b(?:content|alt|aria-label)="([^"]*)"') | ForEach-Object { $_.Groups[1].Value }
 $scriptText = Get-Content -Raw -LiteralPath (Join-Path $ProjectRoot 'script.js')
+Assert-Check ($html.Contains('<script src="script.js?v=20261018"></script>')) 'Focus script uses the current cache version' 'Focus script cache version is stale'
 $focusLabelBlock = [regex]::Match($scriptText, '(?s)const focusLabels = \{(.*?)\};')
 $readerCopy = $visibleText + ' ' + ($readerAttributes -join ' ') + ' ' + $focusLabelBlock.Groups[1].Value
 Assert-Check ($readerCopy -notmatch '(?i)\bexperience\b') 'Reader-facing website copy uses concrete wording instead of experience' 'The removed generic term remains in website prose or metadata'
