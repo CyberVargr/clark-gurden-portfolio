@@ -27,7 +27,7 @@ document.querySelector('#year').textContent = new Date().getFullYear();
 const focusLabels = {
   strategy: 'Product & Portfolio Strategy',
   creative: 'Creative & Brand Voice',
-  technical: 'Technical & B2B Enablement'
+  technical: 'Partner and Sales-Facing Documentation'
 };
 
 const focusMode = new URLSearchParams(window.location.search).get('focus');

@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [string]$ProjectRoot = (Split-Path -Parent $PSScriptRoot),
     [switch]$PublicationReady,
@@ -40,22 +40,22 @@ function Assert-Check {
 Write-Host "Clark Gurden portfolio validation`n"
 
 $canonicalPortfolioUrl = 'https://cybervargr.github.io/clark-gurden-portfolio/'
-$expectedTitle = 'Clark Gurden | Product Marketing, Brand Strategy & Technical Enablement'
-$expectedDescription = 'Senior product marketing portfolio spanning global brand strategy, creative messaging, technical sales enablement, and international hardware launches.'
-$expectedOgDescription = 'Global product positioning, creative messaging, technical enablement, and launch systems across consumer, gaming, and commercial hardware.'
-$expectedHeroIntro = 'I turn complex hardware into clear buyer choices—building differentiated positioning, launch messaging, and sales enablement across products, channels, and international markets.'
-$expectedWorkSupport = 'Across category entry, portfolio architecture, launch messaging, technical governance, B2B enablement, and brand worldbuilding, each example shows the problem, decision, ownership boundary, and public evidence.'
+$expectedTitle = 'Clark Gurden | Product Marketing, Brand Strategy & Global Launch Messaging'
+$expectedDescription = 'Senior product marketing portfolio spanning global brand strategy, creative messaging, partner and sales-facing documentation, and international hardware launches.'
+$expectedOgDescription = 'Global product positioning, creative messaging, source content for regional teams, and launch systems across consumer, gaming, and commercial hardware.'
+$expectedHeroIntro = 'Turns complex hardware into clear buyer choices through positioning, launch messaging, and the source content regional teams and partners sell from.'
+$expectedWorkSupport = 'Across category entry, portfolio architecture, launch messaging, claims substantiation, partner and sales-facing documentation, and brand worldbuilding, each example shows the problem, decision, ownership boundary, and public evidence.'
 $expectedAboutHeading = 'Senior product marketing across gaming, consumer, and commercial hardware.'
 $expectedAboutFirst = 'Clark Gurden spent 10+ years at Acer headquarters in Taiwan, from April 2016 to July 2026, shaping global product marketing across Predator, Acer Nitro, AI PCs, and commercial hardware.'
-$expectedAboutSecond = 'His work spans portfolio differentiation, launch messaging systems, information architecture, claims and specification governance, brand worldbuilding, and sales enablement across laptops, desktops, handhelds, monitors, peripherals, audio, connected devices, AI PCs, and gaming furniture.'
-$expectedAboutRegional = 'Based in the Greater Lansing area, Michigan, United States. Native English. Experienced in global product-marketing execution across EMEA, Pan America (North and Latin America), and Pan Asia Pacific.'
+$expectedAboutSecond = 'His work spans portfolio differentiation, launch messaging systems, information architecture, claims substantiation and specification verification, brand worldbuilding, and partner and sales-facing documentation across laptops, desktops, handhelds, monitors, peripherals, audio, connected devices, AI PCs, and gaming furniture.'
+$expectedAboutRegional = 'He is based in Michigan, is a native English speaker, and has worked across EMEA, Pan America, and Pan Asia Pacific.'
 
 Assert-Check ($html.Contains("<title>$expectedTitle</title>") -and $html.Contains("<meta property=`"og:title`" content=`"$expectedTitle`">")) 'Page and Open Graph titles use the approved senior positioning' 'Page or Open Graph title is missing the approved senior positioning'
 Assert-Check ($html.Contains("<meta name=`"description`" content=`"$expectedDescription`">")) 'Meta description uses the approved senior positioning' 'Meta description is missing or altered'
 Assert-Check ($html.Contains("<meta property=`"og:description`" content=`"$expectedOgDescription`">")) 'Open Graph description uses the approved senior positioning' 'Open Graph description is missing or altered'
-Assert-Check ($html.Contains('<meta property="og:image:alt" content="Clark Gurden senior product marketing, brand strategy, and technical enablement portfolio.">')) 'Open Graph image has the approved audience-neutral alt text' 'Open Graph image alt text is missing or differs from the approved preview'
+Assert-Check ($html.Contains('<meta property="og:image:alt" content="Clark Gurden portfolio: product marketing, brand strategy, and global launch messaging.">')) 'Open Graph image has the approved audience-neutral alt text' 'Open Graph image alt text is missing or differs from the approved preview'
 Assert-Check ($html.Contains('<p class="hero-role">Senior Product Marketing &<br>Global Brand Strategy</p>')) 'Hero role uses the approved senior positioning' 'Hero role is missing or altered'
-Assert-Check ($html.Contains('<p class="hero-domain"><span>Consumer &amp; Commercial Hardware</span><span>Portfolio Architecture</span><span>Global GTM &amp; Enablement</span></p>')) 'Hero domains use the approved three-part scope' 'Hero domains are missing or altered'
+Assert-Check ($html.Contains('<p class="hero-domain"><span>Consumer &amp; Commercial Hardware</span><span>Portfolio Architecture</span><span>Global Launch Messaging</span></p>')) 'Hero domains use the approved three-part scope' 'Hero domains are missing or altered'
 Assert-Check ($html.Contains($expectedHeroIntro)) 'Hero introduction uses the approved senior scope' 'Hero introduction is missing or altered'
 Assert-Check ($html.Contains($expectedWorkSupport)) 'Selected Work support line uses the approved scope' 'Selected Work support line is missing or altered'
 Assert-Check ($html.Contains("<h2>$expectedAboutHeading</h2>") -and $html.Contains($expectedAboutFirst) -and $html.Contains($expectedAboutSecond) -and $html.Contains($expectedAboutRegional)) 'About positioning is complete and exact' 'About heading or approved positioning paragraphs are missing or altered'
@@ -66,7 +66,7 @@ $regionalLedgerBoundary = $ledger.Contains("Acer's official public operating-reg
     $ledger.Contains('Pan America as covering North and Latin America') -and
     $ledger.Contains('does not claim regional organization ownership, distributor or channel management, direct sales, country coverage, pipeline, revenue, or equal activity volume in every market')
 Assert-Check $regionalLedgerBoundary 'Decision ledger preserves regional terminology and ownership boundaries' 'Decision ledger is missing the approved regional terminology or ownership boundary'
-Assert-Check ($html.Contains('<link rel="stylesheet" href="styles.css?v=corrected-20261012">')) 'Stylesheet uses the current correction cache key' 'Stylesheet cache key is missing or altered'
+Assert-Check ($html.Contains('<link rel="stylesheet" href="styles.css?v=20261018">')) 'Stylesheet uses the current cache key' 'Stylesheet cache key is missing or altered'
 Assert-Check ($chatgptReview.Contains('Clark_Gurden_Resume_2026.pdf') -and -not $chatgptReview.Contains('Clark_Gurden_Resume_2026.docx')) 'Review brief names the current public resume PDF' 'Review brief still names an obsolete resume file'
 $furnitureImageRule = [regex]::Match($styles, '\.furniture-gallery\s+img\s*\{(?<declarations>[^}]*)\}', 'IgnoreCase')
 $wallpaperImageRule = [regex]::Match($styles, '\.wallpaper-proof-gallery\s+img\s*\{(?<declarations>[^}]*)\}', 'IgnoreCase')
@@ -99,7 +99,7 @@ $jsonLdValid = $false
 if ($jsonLdMatch.Success) {
     try {
         $jsonLd = $jsonLdMatch.Groups[1].Value | ConvertFrom-Json
-        $requiredKnowledge = @('Portfolio Architecture', 'Information Architecture', 'Claims Governance')
+        $requiredKnowledge = @('Portfolio Architecture', 'Information Architecture', 'Claims Substantiation')
         $jsonLdValid = $jsonLd.jobTitle -eq 'Product Marketing & Global Brand Strategy' -and
             $jsonLd.url -eq $canonicalPortfolioUrl -and
             @($jsonLd.sameAs).Count -eq 1 -and
@@ -114,6 +114,23 @@ Assert-Check $jsonLdValid 'JSON-LD has the canonical URL, approved role, LinkedI
 
 $visibleHtml = [regex]::Replace($html, '(?is)<(?:script|style)\b.*?</(?:script|style)>', ' ')
 $visibleText = [System.Net.WebUtility]::HtmlDecode([regex]::Replace($visibleHtml, '<[^>]+>', ' '))
+# Reader-facing copy includes HTML text, metadata, accessibility labels, and
+# dynamic focus labels. Technical class names, IDs, URLs, and historical notes
+# are deliberately excluded from this terminology boundary.
+$readerAttributes = [regex]::Matches($html, '(?is)\b(?:content|alt|aria-label)="([^"]*)"') | ForEach-Object { $_.Groups[1].Value }
+$scriptText = Get-Content -Raw -LiteralPath (Join-Path $ProjectRoot 'script.js')
+$focusLabelBlock = [regex]::Match($scriptText, '(?s)const focusLabels = \{(.*?)\};')
+$readerCopy = $visibleText + ' ' + ($readerAttributes -join ' ') + ' ' + $focusLabelBlock.Groups[1].Value
+Assert-Check ($readerCopy -notmatch '(?i)\bexperience\b') 'Reader-facing website copy uses concrete wording instead of experience' 'The removed generic term remains in website prose or metadata'
+Assert-Check ($readerCopy -notmatch '(?i)\benablement\b|\bgovernance\b') 'Reader-visible copy and metadata avoid removed capability claims' 'Removed capability terminology remains in reader-visible copy or metadata'
+Assert-Check ($html.Contains('<p class="eyebrow">Available for U.S. remote roles. Authorized to work in the U.S.</p>')) 'Hero contains the exact availability and authorization line' 'Hero availability or authorization wording is missing or altered'
+Assert-Check ($html -match '(?s)Greater Lansing area, Michigan · Global scope</p>\s*<p class="eyebrow">Available for U.S. remote roles\. Authorized to work in the U\.S\.</p>') 'Availability follows the location immediately' 'Availability is outside its approved hero position'
+Assert-Check ($html.Contains('<h3>Technical Product-Sheet Documentation</h3>') -and $html.Contains('<h3>Human review at scale</h3>')) 'Approved documentation and human-review headings exist' 'Approved documentation or human-review heading is missing'
+Assert-Check ($html.Contains('<li>Claims substantiation</li>') -and $html.Contains('<li>Partner and tender documentation</li>')) 'Capability labels describe substantiation and documentation' 'Approved capability labels are missing'
+Assert-Check ($html.Contains('verified claims and disclaimers') -and -not $html.Contains('governed claims and disclaimers')) 'Case copy explicitly uses verified claims and disclaimers' 'Case copy reverted to governed claims or lost the approved phrase'
+Assert-Check ($html.Contains('href="downloads/Clark_Gurden_Resume_2026.pdf?v=20261018" download="Clark_Gurden_Resume_2026.pdf"')) 'Resume link and saved filename match the approved replacement' 'Resume link, version, or download filename is stale'
+Assert-Check ($html -notmatch '(?i)corrected') 'Public version strings omit the obsolete correction label' 'Obsolete correction label remains in public HTML'
+
 $bareCanonicalPattern = '(?i)(?<!Acer )\b(?:Nitro Blaze Link|Nitro 70)\b|\bNitro V laptop line\b|(?<!Predator )\b(?:Helios 18 AI|Triton 14 AI|Helios Neo|Triton Neo|Orion 7000|Thronos Air|Rift 371|Gaming Desk)\b|(?<!Predator )(?<!Acer Nitro )\bCycloneX 360\b'
 Assert-Check ($visibleText -notmatch $bareCanonicalPattern) 'Visible product and model references use complete canonical names' 'Visible copy contains a shortened product or model name'
 $bareAcerNitroBrandPattern = '(?i)(?<!Acer )\bNitro\b'
@@ -243,7 +260,7 @@ if ($worldbuildingSectionMatch.Success) {
     $furnitureIndex = $html.IndexOf('id="furniture"')
     $worldbuildingIndex = $html.IndexOf('id="brand-worldbuilding"')
     $enablementIndex = $html.IndexOf('id="product-sheet-enablement"')
-    Assert-Check ($furnitureIndex -ge 0 -and $furnitureIndex -lt $worldbuildingIndex -and $worldbuildingIndex -lt $enablementIndex) 'Worldbuilding module sits after Furniture and before Product-Sheet Governance' 'Worldbuilding module is outside the approved case-order position'
+    Assert-Check ($furnitureIndex -ge 0 -and $furnitureIndex -lt $worldbuildingIndex -and $worldbuildingIndex -lt $enablementIndex) 'Worldbuilding module sits after Furniture and before Product-Sheet Documentation' 'Worldbuilding module is outside the approved case-order position'
 
     $wallpaperPlaceholderPattern = '(?i)\b(?:tbd|placeholder|coming soon|to be confirmed|pending confirmation|artist name)\b'
     $worldbuildingForbiddenClaimPattern = '(?is)Clark.{0,100}\b(?:created|designed|illustrated)\b.{0,60}\b(?:art|artwork|wallpaper|character|visual)|Clark.{0,100}\bmanaged\b.{0,60}\b(?:agency|artist)|Clark.{0,100}\b(?:built|designed|coded)\b.{0,60}\b(?:page|site|destination)|Clark.{0,100}\b(?:announced|published|produced)\b|Clark.{0,100}\b(?:handled|owned|led)\b.{0,60}\b(?:announcement|publication|final campaign)|Clark.{0,100}\b(?:authored|wrote)\b.{0,40}\bgraphic novel|Clark.{0,100}\b(?:won|winner|award)\b|\b(?:sole|solely)\b.{0,40}\b(?:owned|ownership|program|campaign)\b|\bShorty\s+(?:win|winner)\b|\b(?:Horizon Zero Dawn|workplace grievance|voice acting|GPC)\b|\bAI\b|\b(?:sales|revenue|audience metrics)\b'
@@ -306,11 +323,11 @@ if ($systemsSectionMatch.Success) {
 Assert-Check ($html -match 'Gaming Portfolio Architecture') 'Gaming Portfolio Architecture section exists' 'Gaming Portfolio Architecture section is missing'
 Assert-Check ($html.Contains('Contributions and deliverables varied by launch; each case identifies the relevant responsibilities and supporting evidence.')) 'Representative coverage scope is explicit' 'The global representative-work scope note is missing'
 
-Assert-Check ($html -match 'id="product-sheet-enablement"') 'Technical Product-Sheet Governance case exists' 'Technical Product-Sheet Governance case is missing'
+Assert-Check ($html -match 'id="product-sheet-enablement"') 'Technical Product-Sheet Documentation case exists' 'Technical Product-Sheet Documentation case is missing'
 Assert-Check ($html -match [regex]::Escape("Representative reconstruction illustrating Clark’s technical product-sheet workflow. Created from public specifications; confidential Acer source material is not reproduced.")) 'Public reconstruction carries the approved confidentiality label' 'The approved reconstruction label is missing or altered'
 
 $enablementSectionMatch = [regex]::Match($html, '(?s)<article\b[^>]*id="product-sheet-enablement"[^>]*>.*?</article>', 'IgnoreCase')
-Assert-Check ($enablementSectionMatch.Success) 'Technical Product-Sheet Governance section is structurally complete' 'Technical Product-Sheet Governance section could not be parsed'
+Assert-Check ($enablementSectionMatch.Success) 'Technical Product-Sheet Documentation section is structurally complete' 'Technical Product-Sheet Documentation section could not be parsed'
 if ($enablementSectionMatch.Success) {
     $enablementHtml = $enablementSectionMatch.Value
     $officialProductUrl = 'https://www.acer.com/us-en/desktops-and-all-in-ones/veriton-all-in-ones/veriton-vero-6000-all-in-one'
@@ -411,7 +428,7 @@ if ($writingSectionPresent) {
             Label = 'Immersive display narrative'
             Model = 'Predator X35'
             Quote = '“pulls you in, wraps around your vision and refuses to let go.”'
-            Explanation = 'Turns curvature and ultrawide scale into a felt experience before specifications become the proof.'
+            Explanation = 'Leads with how the curvature and ultrawide scale feel to sit in front of, then lets the specifications carry the proof.'
             Url = 'https://www.acer.com/gb-en/predator/monitors/x35'
         },
         @{
@@ -491,7 +508,7 @@ $displayCards = [regex]::Matches($html, '<article\b[^>]*class="[^"]*display-proo
 Assert-Check ($displayCards.Count -le 2) 'Display proof uses no more than two products' 'Display proof contains more than two product cards'
 $displaySectionMatch = [regex]::Match($html, '(?s)<section\b[^>]*id="display-proof"[^>]*>.*?</section>', 'IgnoreCase')
 $displayBreadthSentence = "These two 2026 launches are selected recent proof from broader assigned Predator and Acer Nitro gaming-display work across much of Clark’s Acer tenure."
-$displayContrastSentence = 'Predator XB273K 3D prioritizes immersive depth and 4K detail. Predator X34 F1 prioritizes competition-grade speed while preserving an ultrawide QD-OLED experience.'
+$displayContrastSentence = 'Predator XB273K 3D prioritizes immersive depth and 4K detail. Predator X34 F1 prioritizes competition-grade speed while preserving ultrawide QD-OLED image quality.'
 $displayIntroExact = "<p class=`"display-proof-intro`">$displayBreadthSentence $displayContrastSentence</p>"
 Assert-Check ($displaySectionMatch.Success -and $displaySectionMatch.Value.Contains($displayIntroExact)) 'Display proof introduces the exact approved breadth and product contrast' 'Display proof breadth sentence or existing product contrast is missing, altered, or reordered'
 $displayBreadthForbiddenPattern = '(?is)\b(?:all|every|entire)\b.{0,35}\b(?:gaming[- ]?)?(?:monitor|display)\s+portfolio\b|\b\d+\+?\s+(?:gaming[- ]?)?(?:monitors?|displays?)\b|\b(?:Predator X35|Predator Z57)\b|\b(?:older|historical|earlier)\b.{0,120}\b(?:product summar(?:y|ies)|page structure|image approval|final visual design|production)\b'
@@ -595,15 +612,23 @@ if (Test-Path -LiteralPath $resumePath) {
     $resumeReadCode = 'from pypdf import PdfReader; import sys; print(" ".join(" ".join(p.extract_text().split()) for p in PdfReader(sys.argv[1]).pages))'
     $resumeText = (& $resumePython -c $resumeReadCode $resumePath) -join ' '
     if ($LASTEXITCODE -ne 0) { throw 'Public resume PDF text extraction failed' }
-    Assert-Check ($resumeText -notmatch '(?i)reviewer guides') 'Resume keeps reviewer guide singular' 'Resume contains prohibited plural “reviewer guides”'
-    Assert-Check ($resumeText -match 'Created product summaries for Predator Atlas 8 and Acer Nitro Blaze Link') 'Resume retains the approved representative product-summary examples' 'Resume does not retain the approved representative product-summary examples'
+    # October 18 user-supplied replacement, reported by the user as audited. This file
+    # supplies current content fixtures without changing website scope boundaries.
+    $approvedResumeHash = 'AC3656BB29F6B5F0492FE65DEC298D5A1676486EE49108491F6A2A235E400C9B'
+    # A binary rebuild can change this hash without changing approved text.
+    # Keep this diagnostic advisory; the content assertions below are blocking.
+    if ((Get-FileHash -Algorithm SHA256 -LiteralPath $resumePath).Hash -ne $approvedResumeHash) {
+        Write-Warning 'Resume binary differs from the October 18 reference. Inspect the rendered PDF; content validation continues.'
+    }
+    else {
+        Write-Host 'INFO  Resume matches the October 18 reference binary'
+    }
+    Assert-Check ($resumeText.Contains('Senior Technology Copywriter | Product Messaging, Positioning and Launches')) 'Resume has the approved positioning header' 'Resume positioning header is missing or stale'
+    Assert-Check ($resumeText.Contains('Greater Lansing, Michigan | U.S. Remote | Authorized to work in the U.S.') -and $resumeText.Contains('(517) 643-4602')) 'Resume has the approved location, authorization, and contact details' 'Resume location, authorization, or contact details differ from the approved file'
+    Assert-Check ($resumeText.Contains('Global Headquarters, Taipei, Taiwan | April 2016 to July 2026') -and $resumeText.Contains('Marketing Supervisor, Head Gaming Copywriter | June 2021 to July 2026')) 'Resume retains historical Acer location, tenure, and verified role title' 'Resume historical Acer identity or dates are missing or altered'
+    Assert-Check ($resumeText.Contains('20 to 30 Predator and Nitro launches annually')) 'Resume retains the approved annual launch scale' 'Resume annual launch scale is missing or altered'
     Assert-Check ($resumeText -notmatch '80\+' -and $html -notmatch '80\+') 'No disputed product-sheet volume is published' 'Disputed product-sheet volume remains public'
-    Assert-Check ($resumeText.Contains('Greater Lansing area, Michigan, United States') -and $resumeText.Contains('+1 (517) 643-4602')) 'Resume uses the approved US contact details' 'Resume has stale contact details'
-    Assert-Check ($resumeText.Contains('Taipei, Taiwan | Jun 2021 - Jul 2026')) 'Resume preserves the historical Acer employment location' 'Historical Acer employment location is missing'
-    Assert-Check ($resumeText -match 'Predator Atlas 8 reviewer guide') 'Resume limits the reviewer guide to Atlas 8' 'Resume does not state the approved reviewer-guide scope'
     Assert-Check ($resumeText -notmatch 'owning global positioning and go-to-market') 'Resume avoids overly broad sole-ownership language' 'Resume contains overly broad positioning/GTM ownership language'
-    Assert-Check ($resumeText -match 'Through July 2026') 'Resume states the gaming-PC messaging period' 'Resume is missing the through-July-2026 scope'
-    Assert-Check ($resumeText -match 'assigned hardware releases annually') 'Resume states assigned-launch scope' 'Resume is missing assigned-launch scope'
     Assert-Check ($resumeText -notmatch '(?i)performed well') 'Resume contains no unsupported “performed well” claim' 'Resume contains prohibited “performed well” outcome language'
     $resumeNeoSafetyText = $resumeText.Replace('no standalone Neo tier', '')
     Assert-Check ($resumeNeoSafetyText -notmatch $unqualifiedNeoPattern) 'Resume asserts no unqualified Neo tier' 'Resume contains prohibited unqualified Neo tier language'
